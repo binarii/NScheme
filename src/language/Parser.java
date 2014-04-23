@@ -1,15 +1,23 @@
 package language;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
+import language.Functions.FuncAdd;
+import language.Functions.FuncDivide;
+import language.Functions.FuncMultiply;
+import language.Functions.FuncSubtract;
+import environment.Environment;
+
 public class Parser {
 
-	public LinkedList<Object> parse(String s) throws ParseException {
+	public static LinkedList<Object> parse(String s) throws ParseException {
 		LinkedList<String> tokens = tokenize(s);
-		System.out.println(tokens);
 		Object temp = readToken(tokens);
 		if (temp instanceof LinkedList) {
 			return (LinkedList<Object>) temp;
@@ -17,7 +25,7 @@ public class Parser {
 		return null;
 	}
 
-	public LinkedList<String> tokenize(String s) {
+	public static LinkedList<String> tokenize(String s) {
 		String tmp = s.replace("(", " ( ");
 		tmp = tmp.replace(")", " ) ");
 		String[] tokenArray = tmp.split("[ ]+");
@@ -25,11 +33,12 @@ public class Parser {
 		for (String str : tokenArray) {
 			tokens.add(str);
 		}
+		// First token will but blank
 		tokens.pop();
 		return tokens;
 	}
 
-	public Object readToken(LinkedList<String> tokens) throws ParseException {
+	public static Object readToken(LinkedList<String> tokens) throws ParseException {
 		if (tokens.size() == 0) {
 			throw new ParseException("Unexpected EOF found", 0);
 		}
@@ -49,7 +58,7 @@ public class Parser {
 		}
 	}
 
-	public Object atomize(String s) {
+	public static Object atomize(String s) {
 		try {
 			return Integer.parseInt(s);
 		} catch (NumberFormatException e) {
@@ -60,16 +69,42 @@ public class Parser {
 			}
 		}
 	}
-
-	public static void main(String[] args) {
-		String test = "(add 4 4 (sum A2 A8))";
-		Parser parser = new Parser();
+	
+	public static void testParser(Parser parser, Environment envr, String test) {
 		try {
-			LinkedList<Object> tokens = parser.parse(test);
+			LinkedList<Object> tokens = Parser.parse(test);
 			System.out.println(tokens);
+			
+			Object result = Language.eval(tokens, envr);
+			System.out.println(result);
+			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) {
+		Parser parser = new Parser();
+		Environment envr = new Environment();
+
+		envr.putVar("+", new FuncAdd());
+		envr.putVar("-", new FuncSubtract());
+		envr.putVar("/", new FuncDivide());
+		envr.putVar("*", new FuncMultiply());
+		envr.putVar("PI", new Float(3.14159));
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
+		String input = "";
+		while (true) {
+			try {
+				input = br.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			testParser(parser, envr, input);
 		}
 	}
 }
