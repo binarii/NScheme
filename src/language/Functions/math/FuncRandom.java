@@ -1,16 +1,17 @@
-package language.Functions.conditional;
+package language.Functions.math;
 
 import java.text.ParseException;
 import java.util.LinkedList;
+import java.util.Random;
 
 import language.Functions.BasicFunction;
 
-public class FuncEquals extends BasicFunction {
+public class FuncRandom extends BasicFunction {
 
 	@Override
 	public Object eval(LinkedList<Object> args) throws ParseException {
-		validateArgCount(args, 2);
-
-		return args.get(0).equals(args.get(1));
+		validateArgCount(args, 0);
+		
+		return new Random().nextInt();
 	}
 }

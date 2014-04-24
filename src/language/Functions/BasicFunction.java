@@ -9,7 +9,7 @@ public abstract class BasicFunction implements Function {
 	public abstract Object eval(LinkedList<Object> args) throws ParseException;
 
 	protected void validateArgCount(LinkedList<Object> args, int count) throws ParseException {
-		if ((args.size() - 1) != count) {
+		if (args.size() != count) {
 			throw new ParseException("Incorrect number of arguments", 0);
 		}
 	}
