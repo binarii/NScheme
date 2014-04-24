@@ -23,6 +23,9 @@ public class Table implements IViewTable {
 	public static final int DEFAULT_WIDTH = 26;
 	public static final int DEFAULT_HEIGHT = 100;
 
+	public static final int DEFAULT_ROW_SIZE = 20;
+	public static final int DEFAULT_COL_SIZE = 64;
+
 	public Table() {
 		this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
@@ -57,24 +60,24 @@ public class Table implements IViewTable {
 		_colSizes = new int[_width];
 
 		for (int i = 0; i < _rowSizes.length; i++) {
-			_rowSizes[i] = Row.DEFAULT_SIZE;
+			_rowSizes[i] = DEFAULT_ROW_SIZE;
 		}
 
 		for (int i = 0; i < _colSizes.length; i++) {
-			_colSizes[i] = Column.DEFAULT_SIZE;
+			_colSizes[i] = DEFAULT_COL_SIZE;
 		}
-	}	
-	
+	}
+
 	public void addListener(TableListener listener) {
 		_listeners.add(listener);
 	}
-	
+
 	public void notifyListeners(IViewCell cell) {
-		for(TableListener l : _listeners) {
+		for (TableListener l : _listeners) {
 			l.updateTableListener(cell);
 		}
 	}
-	
+
 	public void setSelected(Cell cell) {
 		if (_selected == cell) {
 			return;
@@ -189,7 +192,7 @@ public class Table implements IViewTable {
 	public boolean isDirtyQueueEmpty() {
 		return _dirtyCells.isEmpty();
 	}
-	
+
 	public void markDirty(IViewCell cell) {
 		_dirtyCells.add(cell);
 		notifyListeners(cell);
