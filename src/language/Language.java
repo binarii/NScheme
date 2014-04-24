@@ -11,11 +11,20 @@ import language.Functions.Arithmatic.FuncSubtract;
 import language.Functions.conditional.FuncEquals;
 import language.Functions.conditional.FuncGreaterThan;
 import language.Functions.conditional.FuncLessThan;
+import language.Functions.math.FuncAbs;
+import language.Functions.math.FuncCeiling;
+import language.Functions.math.FuncFloor;
+import language.Functions.math.FuncModulus;
+import language.Functions.math.FuncPower;
+import language.Functions.math.FuncRandom;
+import language.Functions.math.FuncSqrt;
 import language.Functions.stat.FuncAverage;
 import language.Functions.stat.FuncMax;
 import language.Functions.stat.FuncMin;
 import language.Functions.stat.FuncSum;
-import environment.Environment;
+import language.Functions.trig.FuncCos;
+import language.Functions.trig.FuncSin;
+import language.Functions.trig.FuncTan;
 
 public class Language {
 
@@ -24,7 +33,7 @@ public class Language {
 			// Look up string in environment
 			String s = (String) x;
 			Object result = env.findVar(s);
-			if(result == null) {
+			if (result == null) {
 				throw new ParseException("Identifier not found: " + s, 0);
 			}
 			return result;
@@ -65,10 +74,10 @@ public class Language {
 
 		throw new ParseException("Error parsing input", 0);
 	}
-	
+
 	public static void addDefaultVariables(Environment envr) {
 
-		envr.putVar("PI", new Float(3.14159));
+		envr.putVar("PI", new Float(Math.PI));
 		envr.putVar("#t", new Boolean(true));
 		envr.putVar("#f", new Boolean(false));
 
@@ -76,12 +85,24 @@ public class Language {
 		envr.putVar("-", new FuncSubtract());
 		envr.putVar("/", new FuncDivide());
 		envr.putVar("*", new FuncMultiply());
-		
+
 		envr.putVar("sum", new FuncSum());
-		envr.putVar("average", new FuncAverage());
+		envr.putVar("avg", new FuncAverage());
 		envr.putVar("max", new FuncMax());
 		envr.putVar("min", new FuncMin());
-		
+
+		envr.putVar("sin", new FuncSin());
+		envr.putVar("cos", new FuncCos());
+		envr.putVar("tan", new FuncTan());
+
+		envr.putVar("abs", new FuncAbs());
+		envr.putVar("mod", new FuncModulus());
+		envr.putVar("pow", new FuncPower());
+		envr.putVar("rand", new FuncRandom());
+		envr.putVar("sqrt", new FuncSqrt());
+		envr.putVar("ceil", new FuncCeiling());
+		envr.putVar("floor", new FuncFloor());
+
 		envr.putVar("=", new FuncEquals());
 		envr.putVar("<", new FuncLessThan());
 		envr.putVar(">", new FuncGreaterThan());

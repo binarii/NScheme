@@ -120,7 +120,7 @@ public class Cell implements CellListener, IViewCell {
 
 	@Override
 	public void update() {
-		
+
 	}
 
 	/**

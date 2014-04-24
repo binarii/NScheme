@@ -6,11 +6,6 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.LinkedList;
 
-import language.Functions.Arithmatic.FuncAdd;
-import language.Functions.Arithmatic.FuncDivide;
-import language.Functions.Arithmatic.FuncMultiply;
-import language.Functions.Arithmatic.FuncSubtract;
-import environment.Environment;
 import environment.Table;
 
 public class Parser {
@@ -83,8 +78,9 @@ public class Parser {
 
 	public static void main(String[] args) {
 		Parser parser = new Parser();
-		Environment envr = new Environment();
-		Table table = envr.getTable(0);
+		Table table = new Table();
+		TableEnvironment tableEnvr = new TableEnvironment(table);
+		Environment envr = new Environment(tableEnvr);
 
 		Language.addDefaultVariables(envr);
 

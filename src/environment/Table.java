@@ -72,6 +72,10 @@ public class Table implements IViewTable {
 		_listeners.add(listener);
 	}
 
+	public void removeAllListeners() {
+		_listeners.clear();
+	}
+
 	public void notifyListeners(IViewCell cell) {
 		for (TableListener l : _listeners) {
 			l.updateTableListener(cell);

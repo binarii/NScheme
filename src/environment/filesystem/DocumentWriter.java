@@ -1,9 +1,7 @@
 package environment.filesystem;
 
-import java.net.URI;
-
-import environment.Environment;
+import environment.Table;
 
 public interface DocumentWriter {
-	public void WriteFile(String filename, Environment e);
+	public void WriteFile(String filename, Table t);
 }

@@ -1,6 +1,5 @@
 package environment.filesystem;
 
-import environment.Environment;
 import environment.Table;
 
 public interface DocumentReader {

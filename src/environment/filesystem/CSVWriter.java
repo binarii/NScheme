@@ -1,25 +1,26 @@
 package environment.filesystem;
-import environment.Environment;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
+import environment.Table;
+
 public class CSVWriter implements DocumentWriter {
 
 	@Override
-	public void WriteFile(String filename, Environment e) {
+	public void WriteFile(String filename, Table t) {
 		try {
 			FileWriter writer = new FileWriter(filename);
-			
-			int width = e.getTable(0).getWidth();
-			int height = e.getTable(0).getHeight();
-			
+
+			int width = t.getWidth();
+			int height = t.getHeight();
+
 			String valueToWrite = "";
-			
-			for(int y = 0; y < height; y++) {
-				for(int x = 0; x < width; x++) {
-					valueToWrite = e.getTable(0).getCellAtIndex(x, y).getString();
-					if(valueToWrite.equals("")) {
+
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					valueToWrite = t.getCellAtIndex(x, y).getString();
+					if (valueToWrite.equals("")) {
 						valueToWrite = " ";
 					}
 					writer.append(valueToWrite);
@@ -29,8 +30,7 @@ public class CSVWriter implements DocumentWriter {
 			}
 			writer.flush();
 			writer.close();
-		}
-		catch(IOException exception) {
+		} catch (IOException exception) {
 			exception.printStackTrace();
 		}
 	}
