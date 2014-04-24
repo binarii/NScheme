@@ -11,16 +11,14 @@ import language.Functions.Arithmatic.FuncDivide;
 import language.Functions.Arithmatic.FuncMultiply;
 import language.Functions.Arithmatic.FuncSubtract;
 import environment.Environment;
+import environment.Table;
 
 public class Parser {
 
-	public static LinkedList<Object> parse(String s) throws ParseException {
+	public static Object parse(String s) throws ParseException {
 		LinkedList<String> tokens = tokenize(s);
 		Object temp = readToken(tokens);
-		if (temp instanceof LinkedList) {
-			return (LinkedList<Object>) temp;
-		}
-		return null;
+		return temp;
 	}
 
 	public static LinkedList<String> tokenize(String s) {
@@ -32,7 +30,9 @@ public class Parser {
 			tokens.add(str);
 		}
 		// First token will but blank
-		tokens.pop();
+		if (tokens.peek().equals("")) {
+			tokens.pop();
+		}
 		return tokens;
 	}
 
@@ -67,15 +67,15 @@ public class Parser {
 			}
 		}
 	}
-	
+
 	public static void testParser(Parser parser, Environment envr, String test) {
 		try {
-			LinkedList<Object> tokens = Parser.parse(test);
+			Object tokens = Parser.parse(test);
 			System.out.println(tokens);
-			
+
 			Object result = Language.eval(tokens, envr);
 			System.out.println(result);
-			
+
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -84,17 +84,18 @@ public class Parser {
 	public static void main(String[] args) {
 		Parser parser = new Parser();
 		Environment envr = new Environment();
+		Table table = envr.getTable(0);
 
-		envr.putVar("+", new FuncAdd());
-		envr.putVar("-", new FuncSubtract());
-		envr.putVar("/", new FuncDivide());
-		envr.putVar("*", new FuncMultiply());
-		envr.putVar("PI", new Float(3.14159));
-		envr.putVar("#t", new Boolean(true));
-		envr.putVar("#f", new Boolean(false));
-		
+		Language.addDefaultVariables(envr);
+
+		table.getCellAtIndex(0, 0).setString("1");
+		table.getCellAtIndex(0, 1).setString("2");
+		table.getCellAtIndex(0, 2).setString("3");
+		table.getCellAtIndex(0, 3).setString("4");
+		table.getCellAtIndex(0, 4).setString("5");
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
+
 		String input = "";
 		while (true) {
 			try {

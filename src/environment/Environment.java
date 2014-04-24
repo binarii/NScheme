@@ -3,6 +3,8 @@ package environment;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import language.Parser;
+
 public class Environment {
 	ArrayList<Table> _tables;
 	HashMap<String, Object> _envrVariables;
@@ -20,7 +22,7 @@ public class Environment {
 	public Object findVar(String s) {
 		Object cellRef = parseCell(s);
 		if (cellRef != null) {
-			return cellRef;
+			return Parser.atomize(((Cell)cellRef).getString());
 		}
 
 		Object rangeRef = parseRange(s);
