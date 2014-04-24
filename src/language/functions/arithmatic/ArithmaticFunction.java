@@ -1,16 +1,17 @@
 package language.functions.arithmatic;
 
-import java.text.ParseException;
 import java.util.LinkedList;
 
+import language.exception.ArgumentTypeException;
+import language.exception.LangParseException;
 import language.functions.Function;
 
 public abstract class ArithmaticFunction implements Function {
 
 	@Override
-	public abstract Object eval(LinkedList<Object> args) throws ParseException;
+	public abstract Object eval(LinkedList<Object> args) throws LangParseException;
 
-	protected Object simpleApply(SimpleOp op, LinkedList<Object> args) throws ParseException {
+	protected Object simpleApply(SimpleOp op, LinkedList<Object> args) throws LangParseException {
 		float result = getFloat(args.pop());
 		boolean floatParams = false;
 
@@ -22,7 +23,7 @@ public abstract class ArithmaticFunction implements Function {
 			if (i instanceof Number) {
 				result = op.eval(result, getFloat(i));
 			} else {
-				throw new ParseException("Incorrect parameters", 0);
+				throw new ArgumentTypeException(Number.class, i.getClass(), 0);
 			}
 		}
 

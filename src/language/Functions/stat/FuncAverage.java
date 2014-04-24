@@ -1,18 +1,19 @@
 package language.functions.stat;
 
-import java.text.ParseException;
 import java.util.LinkedList;
 
 import environment.Cell;
 import environment.Range;
 import language.Parser;
+import language.exception.ArgumentTypeException;
+import language.exception.LangParseException;
 import language.functions.Function;
 
 public class FuncAverage implements Function {
 	private int count;
 
 	@Override
-	public Object eval(LinkedList<Object> args) throws ParseException {
+	public Object eval(LinkedList<Object> args) throws LangParseException {
 		float result = 0.0f;
 		count = 0;
 		boolean floatParams = false;
@@ -31,11 +32,11 @@ public class FuncAverage implements Function {
 				result = result + ((Number) i).floatValue();
 				count++;
 			} else {
-				throw new ParseException("Incorrect parameters", 0);
+				throw new ArgumentTypeException(Number.class, i.getClass(), 0);
 			}
 		}
 
-		result = result / (float)count;
+		result = result / (float) count;
 		if (floatParams) {
 			return result;
 		} else {
@@ -43,7 +44,7 @@ public class FuncAverage implements Function {
 		}
 	}
 
-	public Object eval(Range range) throws ParseException {
+	public Object eval(Range range) throws LangParseException {
 		float result = 0.0f;
 		boolean floatParams = false;
 
@@ -58,7 +59,7 @@ public class FuncAverage implements Function {
 				result = result + ((Number) val).floatValue();
 				count++;
 			} else {
-				throw new ParseException("Incorrect parameters", 0);
+				throw new ArgumentTypeException(Number.class, val.getClass(), 0);
 			}
 		}
 

@@ -1,8 +1,10 @@
 package language;
 
-import java.text.ParseException;
 import java.util.LinkedList;
 
+import language.exception.ArgumentCountException;
+import language.exception.LangParseException;
+import language.exception.UndeclaredIdenException;
 import language.functions.Function;
 import language.functions.arithmatic.FuncAdd;
 import language.functions.arithmatic.FuncDivide;
@@ -28,13 +30,13 @@ import language.functions.trig.FuncTan;
 
 public class Language {
 
-	public static Object eval(Object x, Environment env) throws ParseException {
+	public static Object eval(Object x, Environment env) throws LangParseException {
 		if (x instanceof String) {
 			// Look up string in environment
 			String s = (String) x;
 			Object result = env.findVar(s);
 			if (result == null) {
-				throw new ParseException("Identifier not found: " + s, 0);
+				throw new UndeclaredIdenException(s);
 			}
 			return result;
 
@@ -48,7 +50,7 @@ public class Language {
 			// Evaluate if differently
 			if (s.equals("if")) {
 				if (l.size() != 4) {
-					throw new ParseException("Incorrect parameters", 0);
+					throw new ArgumentCountException(3, l.size() - 1);
 				}
 				Object test = l.get(1);
 				Object conseq = l.get(2);
@@ -72,7 +74,7 @@ public class Language {
 			return x;
 		}
 
-		throw new ParseException("Error parsing input", 0);
+		throw new LangParseException("ERROR: Error parsing input");
 	}
 
 	public static void addDefaultVariables(Environment envr) {

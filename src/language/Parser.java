@@ -3,14 +3,16 @@ package language;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.util.LinkedList;
 
+import language.exception.EOFException;
+import language.exception.LangParseException;
+import language.exception.UnexpectedTokenException;
 import environment.Table;
 
 public class Parser {
 
-	public static Object parse(String s) throws ParseException {
+	public static Object parse(String s) throws LangParseException {
 		LinkedList<String> tokens = tokenize(s);
 		Object temp = readToken(tokens);
 		return temp;
@@ -31,21 +33,25 @@ public class Parser {
 		return tokens;
 	}
 
-	public static Object readToken(LinkedList<String> tokens) throws ParseException {
+	public static Object readToken(LinkedList<String> tokens) throws LangParseException {
 		if (tokens.size() == 0) {
-			throw new ParseException("Unexpected EOF found", 0);
+			throw new EOFException();
 		}
 
 		String token = tokens.pop();
 		if (token.equals("(")) {
 			LinkedList<Object> l = new LinkedList<Object>();
-			while (!tokens.peek().equals(")")) {
+			Object obj;
+			while ((obj = tokens.peek()) != null && !obj.equals(")")) {
 				l.add(readToken(tokens));
+			}
+			if(tokens.size() == 0) {
+				throw new EOFException();
 			}
 			tokens.pop();
 			return l;
 		} else if (token.equals(")")) {
-			throw new ParseException("Unexpected ')'", 0);
+			throw new UnexpectedTokenException(")");
 		} else { // Else it is a variable, number, etc.
 			return atomize(token);
 		}
@@ -71,8 +77,8 @@ public class Parser {
 			Object result = Language.eval(tokens, envr);
 			System.out.println(result);
 
-		} catch (ParseException e) {
-			e.printStackTrace();
+		} catch (LangParseException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 

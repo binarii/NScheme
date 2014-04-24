@@ -1,16 +1,18 @@
 package language.functions;
 
-import java.text.ParseException;
 import java.util.LinkedList;
+
+import language.exception.ArgumentCountException;
+import language.exception.LangParseException;
 
 public abstract class BasicFunction implements Function {
 
 	@Override
-	public abstract Object eval(LinkedList<Object> args) throws ParseException;
+	public abstract Object eval(LinkedList<Object> args) throws LangParseException;
 
-	protected void validateArgCount(LinkedList<Object> args, int count) throws ParseException {
+	protected void validateArgCount(LinkedList<Object> args, int count) throws LangParseException {
 		if (args.size() != count) {
-			throw new ParseException("Incorrect number of arguments", 0);
+			throw new ArgumentCountException(count, args.size());
 		}
 	}
 }
