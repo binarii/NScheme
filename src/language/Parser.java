@@ -3,15 +3,13 @@ package language;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.LinkedList;
-import java.util.List;
 
-import language.Functions.FuncAdd;
-import language.Functions.FuncDivide;
-import language.Functions.FuncMultiply;
-import language.Functions.FuncSubtract;
+import language.Functions.Arithmatic.FuncAdd;
+import language.Functions.Arithmatic.FuncDivide;
+import language.Functions.Arithmatic.FuncMultiply;
+import language.Functions.Arithmatic.FuncSubtract;
 import environment.Environment;
 
 public class Parser {
@@ -79,7 +77,6 @@ public class Parser {
 			System.out.println(result);
 			
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -93,6 +90,8 @@ public class Parser {
 		envr.putVar("/", new FuncDivide());
 		envr.putVar("*", new FuncMultiply());
 		envr.putVar("PI", new Float(3.14159));
+		envr.putVar("#t", new Boolean(true));
+		envr.putVar("#f", new Boolean(false));
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
@@ -101,7 +100,6 @@ public class Parser {
 			try {
 				input = br.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			testParser(parser, envr, input);

@@ -1,9 +1,9 @@
-package language.Functions;
+package language.Functions.Arithmatic;
 
 import java.text.ParseException;
 import java.util.LinkedList;
 
-public class FuncSubtract extends BasicFunction {
+public class FuncSubtract extends ArithmaticFunction {
 
 	@Override
 	public Object eval(LinkedList<Object> args) throws ParseException {

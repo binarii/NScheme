@@ -54,4 +54,8 @@ public class Language {
 
 		throw new ParseException("Error parsing input", 0);
 	}
+	
+	public static void addDefaultVariables(Environment env) {
+		
+	}
 }
