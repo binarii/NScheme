@@ -12,55 +12,36 @@ import language.exception.LangParseException;
 
 public class LangMath {
 
-	public static Object simpleApply(ApplyOp op, LinkedList<Object> list)
+	public static Object simpleApply(Object accum, ApplyOp op, LinkedList<Object> list)
 			throws LangParseException {
-		Object accumulator = list.peek();
-		boolean first = true;
-
-		// If the first element is a range
-		if (accumulator instanceof Range) {
-			accumulator = simpleApply(op, rangeToList((Range) accumulator));
-		}
 
 		for (Object i : list) {
-			if (first) { // Dont use the first element
-				first = false;
-				continue;
-			}
 
 			if (i instanceof Number) {
-				accumulator = op.eval((Number) accumulator, (Number) i);
+				accum = op.eval((Number) accum, (Number) i);
 			} else if (i instanceof Range) {
-				Object temp = simpleApply(op, rangeToList((Range) i));
-				accumulator = op.eval((Number) accumulator, (Number) temp);
+				accum = simpleApply(accum, op, rangeToList((Range) i));
 			} else {
 				throw new ArgumentTypeException(Number.class, i.getClass(), 0);
 			}
 		}
 
-		return accumulator;
+		return accum;
 	}
 
-	public static Object simpleApplyNoRange(ApplyOp op, LinkedList<Object> list)
+	public static Object simpleApplyNoRange(Object accum, ApplyOp op, LinkedList<Object> list)
 			throws LangParseException {
-		Object accumulator = list.peek();
-		validateNumber(accumulator);
-		boolean first = true;
 
 		for (Object i : list) {
-			if (first) { // Dont use the first element
-				first = false;
-				continue;
-			}
 
 			if (i instanceof Number) {
-				accumulator = op.eval((Number) accumulator, (Number) i);
+				accum = op.eval((Number) accum, (Number) i);
 			} else {
 				throw new ArgumentTypeException(Number.class, i.getClass(), 0);
 			}
 		}
 
-		return accumulator;
+		return accum;
 	}
 
 	// FIXED VARIABLE COUNT FUNCTIONS

@@ -63,6 +63,12 @@ public class Language {
 
 	public static void addDefaultVariables(Environment envr) {
 
+		envr.putVar("#f", false);
+		envr.putVar("#t", true);
+
+		envr.putVar("PI", Math.PI);
+		envr.putVar("EULER", Math.E);
+
 		ArithmaticFunctions.addFunctions(envr);
 		ConditionalFunctions.addFunctions(envr);
 		GeneralFunctions.addFunctions(envr);
