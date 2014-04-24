@@ -24,4 +24,8 @@ public class Range implements Iterable<Cell> {
 	public Iterator<Cell> iterator() {
 		return _cells.iterator();
 	}
+
+	public int size() {
+		return _cells.size();
+	}
 }

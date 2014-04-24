@@ -5,28 +5,12 @@ import java.util.LinkedList;
 import language.exception.ArgumentCountException;
 import language.exception.LangParseException;
 import language.exception.UndeclaredIdenException;
+import language.functions.ArithmaticFunctions;
+import language.functions.ConditionalFunctions;
 import language.functions.Function;
-import language.functions.arithmatic.FuncAdd;
-import language.functions.arithmatic.FuncDivide;
-import language.functions.arithmatic.FuncMultiply;
-import language.functions.arithmatic.FuncSubtract;
-import language.functions.conditional.FuncEquals;
-import language.functions.conditional.FuncGreaterThan;
-import language.functions.conditional.FuncLessThan;
-import language.functions.math.FuncAbs;
-import language.functions.math.FuncCeiling;
-import language.functions.math.FuncFloor;
-import language.functions.math.FuncModulus;
-import language.functions.math.FuncPower;
-import language.functions.math.FuncRandom;
-import language.functions.math.FuncSqrt;
-import language.functions.stat.FuncAverage;
-import language.functions.stat.FuncMax;
-import language.functions.stat.FuncMin;
-import language.functions.stat.FuncSum;
-import language.functions.trig.FuncCos;
-import language.functions.trig.FuncSin;
-import language.functions.trig.FuncTan;
+import language.functions.GeneralFunctions;
+import language.functions.StatFunctions;
+import language.functions.TrigFunctions;
 
 public class Language {
 
@@ -79,34 +63,10 @@ public class Language {
 
 	public static void addDefaultVariables(Environment envr) {
 
-		envr.putVar("PI", new Float(Math.PI));
-		envr.putVar("#t", new Boolean(true));
-		envr.putVar("#f", new Boolean(false));
-
-		envr.putVar("+", new FuncAdd());
-		envr.putVar("-", new FuncSubtract());
-		envr.putVar("/", new FuncDivide());
-		envr.putVar("*", new FuncMultiply());
-
-		envr.putVar("sum", new FuncSum());
-		envr.putVar("avg", new FuncAverage());
-		envr.putVar("max", new FuncMax());
-		envr.putVar("min", new FuncMin());
-
-		envr.putVar("sin", new FuncSin());
-		envr.putVar("cos", new FuncCos());
-		envr.putVar("tan", new FuncTan());
-
-		envr.putVar("abs", new FuncAbs());
-		envr.putVar("mod", new FuncModulus());
-		envr.putVar("pow", new FuncPower());
-		envr.putVar("rand", new FuncRandom());
-		envr.putVar("sqrt", new FuncSqrt());
-		envr.putVar("ceil", new FuncCeiling());
-		envr.putVar("floor", new FuncFloor());
-
-		envr.putVar("=", new FuncEquals());
-		envr.putVar("<", new FuncLessThan());
-		envr.putVar(">", new FuncGreaterThan());
+		ArithmaticFunctions.addFunctions(envr);
+		ConditionalFunctions.addFunctions(envr);
+		GeneralFunctions.addFunctions(envr);
+		StatFunctions.addFunctions(envr);
+		TrigFunctions.addFunctions(envr);
 	}
 }
