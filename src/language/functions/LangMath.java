@@ -203,8 +203,9 @@ public class LangMath {
 		for (Cell i : range) {
 			if (i.getDisplay() instanceof String) {
 				result.add(Parser.atomize(i.getString()));
+			} else {
+				result.add(i.getDisplay());
 			}
-			i.getDisplay();
 		}
 		return result;
 	}

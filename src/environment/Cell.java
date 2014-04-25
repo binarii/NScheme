@@ -74,10 +74,10 @@ public class Cell implements CellListener, IViewCell {
 			update();
 		} else {
 			_displayValue = o;
+			notifyListeners();
 		}
 
 		_parent.markDirty(this);
-		notifyListeners();
 	}
 
 	@Override
@@ -194,7 +194,7 @@ public class Cell implements CellListener, IViewCell {
 
 			_displayValue = result;
 			_parent.markDirty(this);
-
+			notifyListeners();
 		} catch (LangParseException e) {
 			System.out.println(e.getMessage());
 			_displayValue = "ERROR";
