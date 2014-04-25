@@ -91,11 +91,11 @@ public class Parser {
 		table.setEnvironment(envr);
 		Language.addDefaultVariables(envr);
 
-		table.getCellAtIndex(0, 0).setString("1");
-		table.getCellAtIndex(0, 1).setString("2");
-		table.getCellAtIndex(0, 2).setString("3");
-		table.getCellAtIndex(0, 3).setString("4");
-		table.getCellAtIndex(0, 4).setString("5");
+		table.getCellAtIndex(0, 0).setInput("1");
+		table.getCellAtIndex(0, 1).setInput("2");
+		table.getCellAtIndex(0, 2).setInput("3");
+		table.getCellAtIndex(0, 3).setInput("4");
+		table.getCellAtIndex(0, 4).setInput("5");
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

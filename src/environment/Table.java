@@ -26,7 +26,7 @@ public class Table implements IViewTable {
 	public static final int DEFAULT_HEIGHT = 100;
 
 	public static final int DEFAULT_ROW_SIZE = 20;
-	public static final int DEFAULT_COL_SIZE = 64;
+	public static final int DEFAULT_COL_SIZE = 100;
 
 	public Table() {
 		this(DEFAULT_WIDTH, DEFAULT_HEIGHT);

@@ -19,7 +19,7 @@ public class CSVWriter implements DocumentWriter {
 
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
-					valueToWrite = t.getCellAtIndex(x, y).getString();
+					valueToWrite = t.getCellAtIndex(x, y).getInput().toString();
 					if (valueToWrite.equals("")) {
 						valueToWrite = " ";
 					}

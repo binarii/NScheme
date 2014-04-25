@@ -4,13 +4,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import language.TableEnvironment;
 import environment.Table;
 
 public class CSVReader implements DocumentReader {
 
 	@Override
-	public Table readFile(String filename) {
-		Table importedTable = new Table();
+	public Table readFile(Table dest, String filename) {
 
 		BufferedReader reader = null;
 		String readLine = "";
@@ -18,11 +18,11 @@ public class CSVReader implements DocumentReader {
 
 		try {
 			reader = new BufferedReader(new FileReader(filename));
-			for (int y = 0; y < importedTable.getHeight(); y++) {
+			for (int y = 0; y < dest.getHeight(); y++) {
 				readLine = reader.readLine();
 				String[] values = readLine.split(splitBy);
-				for (int x = 0; x < importedTable.getWidth(); x++) {
-					importedTable.getCellAtIndex(x, y).setString(values[x]);
+				for (int x = 0; x < dest.getWidth(); x++) {
+					dest.getCellAtIndex(x, y).setInput(values[x]);
 				}
 			}
 		} catch (IOException e) {
@@ -37,7 +37,6 @@ public class CSVReader implements DocumentReader {
 			}
 		}
 
-		return importedTable;
+		return dest;
 	}
-
 }

@@ -20,7 +20,10 @@ public class TableEnvironment extends Environment {
 	public Object findVar(String s) {
 		Cell cellRef = parseCell(s);
 		if (cellRef != null) {
-			return Parser.atomize(cellRef.getString());
+			if(cellRef.getDisplay() instanceof String) {
+				return Parser.atomize(cellRef.getString());
+			}
+			return cellRef.getDisplay();
 		}
 
 		Object rangeRef = parseRange(s);

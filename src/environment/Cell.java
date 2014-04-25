@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
+import language.Environment;
 import language.Language;
 import language.Parser;
 import language.exception.LangParseException;
@@ -16,8 +17,8 @@ import view.IViewCell;
 public class Cell implements CellListener, IViewCell {
 	private List<CellListener> _listeners;
 
-	private String _displayValue;
-	private String _inputValue;
+	private Object _displayValue;
+	private Object _inputValue;
 
 	private Color _backgroundColor;
 	private Color _foregroundColor;
@@ -64,17 +65,34 @@ public class Cell implements CellListener, IViewCell {
 	}
 
 	@Override
-	public void setString(String s) {
+	public void setInput(Object o) {
 		ClearFormulaRefs();
-		_inputValue = s;
-		if (s.length() > 0 && s.charAt(0) == '=') {
+		_inputValue = o;
+
+		if (isFunction(o)) {
 			AddFormulaRefs();
 			update();
 		} else {
-			_displayValue = s;
+			_displayValue = o;
 		}
+
 		_parent.markDirty(this);
 		notifyListeners();
+	}
+
+	@Override
+	public String getString() {
+		return _displayValue.toString();
+	}
+
+	@Override
+	public Object getInput() {
+		return _inputValue;
+	}
+
+	@Override
+	public Object getDisplay() {
+		return _displayValue;
 	}
 
 	@Override
@@ -87,16 +105,6 @@ public class Cell implements CellListener, IViewCell {
 	public void deselect() {
 		_border = DEFAULT_BORDER;
 		_parent.markDirty(this);
-	}
-
-	@Override
-	public String getString() {
-		return _displayValue;
-	}
-
-	@Override
-	public String getInputString() {
-		return _inputValue;
 	}
 
 	@Override
@@ -150,34 +158,51 @@ public class Cell implements CellListener, IViewCell {
 	}
 
 	private void ClearFormulaRefs() {
-		LinkedList<Cell> refs = Language.getFormulaReferences(_inputValue,
-				_parent.getEnvironment());
+		if (isFunction(_inputValue)) {
 
-		for (Cell c : refs) {
-			c.removeListener(this);
+			LinkedList<Cell> refs;
+			String input = ((String) _inputValue).substring(1);
+			Environment env = _parent.getEnvironment();
+			refs = Language.getFormulaReferences(input, env);
+
+			for (Cell c : refs) {
+				c.removeListener(this);
+			}
 		}
 	}
 
 	private void AddFormulaRefs() {
-		LinkedList<Cell> refs = Language.getFormulaReferences(_inputValue.substring(1),
-				_parent.getEnvironment());
+		if (_inputValue instanceof String) {
 
-		for (Cell c : refs) {
-			c.addListener(this);
+			LinkedList<Cell> refs;
+			String input = ((String) _inputValue).substring(1);
+			Environment env = _parent.getEnvironment();
+			refs = Language.getFormulaReferences(input, env);
+
+			for (Cell c : refs) {
+				c.addListener(this);
+			}
 		}
 	}
 
 	@Override
 	public void update() {
 		try {
-			Object tokens = Parser.parse(_inputValue.substring(1));
+			String input = (String) _inputValue;
+			Object tokens = Parser.parse(input.substring(1));
 			Object result = Language.eval(tokens, _parent.getEnvironment());
 
-			_displayValue = result.toString();
+			_displayValue = result;
+			_parent.markDirty(this);
 
 		} catch (LangParseException e) {
 			System.out.println(e.getMessage());
+			_displayValue = "ERROR";
 		}
+	}
+
+	private boolean isFunction(Object o) {
+		return (o instanceof String && ((String) o).length() > 0 && ((String) o).charAt(0) == '=');
 	}
 
 	/**

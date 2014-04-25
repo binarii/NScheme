@@ -3,6 +3,7 @@ package language;
 import java.util.LinkedList;
 
 import environment.Cell;
+import environment.Range;
 import environment.Table;
 import language.exception.ArgumentCountException;
 import language.exception.LangParseException;
@@ -77,9 +78,16 @@ public class Language {
 		TableEnvironment tEvnt = new TableEnvironment(table);
 
 		for (String t : tokens) {
-			Object ref = tEvnt.parseCell(s);
-			if (ref instanceof Cell) {
-				cells.add((Cell) ref);
+			Cell ref = tEvnt.parseCell(t);
+			if (ref != null) {
+				cells.add(ref);
+			}
+
+			Range rangeRef = tEvnt.parseRange(t);
+			if (rangeRef != null) {
+				for (Cell c : rangeRef) {
+					cells.add(c);
+				}
 			}
 		}
 
