@@ -1,5 +1,6 @@
 package language.functions;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -17,6 +18,8 @@ public class GeneralFunctions {
 		envr.putVar("pow", new PowerFunction());
 		envr.putVar("rand", new RandFunction());
 		envr.putVar("int", new IntFunction());
+		envr.putVar("float", new FloatFunction());
+		envr.putVar("round", new RoundFunction());
 	}
 
 	private static class AbsFunction implements Function {
@@ -104,6 +107,32 @@ public class GeneralFunctions {
 			LangMath.validateNumber(args.get(0));
 
 			return ((Number) args.get(0)).intValue();
+		}
+	}
+
+
+	private static class FloatFunction implements Function {
+		@Override
+		public Object eval(LinkedList<Object> args) throws LangParseException {
+			LangMath.validateParamCount(args, 1);
+			LangMath.validateNumber(args.get(0));
+
+			return ((Number) args.get(0)).floatValue();
+		}
+	}
+
+	private static class RoundFunction implements Function {
+
+		@Override
+		public Object eval(LinkedList<Object> args) throws LangParseException {
+			LangMath.validateParamCount(args, 2);
+			LangMath.validateNumber(args.get(0));
+			LangMath.validateNumber(args.get(1));
+			
+			BigDecimal bd = new BigDecimal(((Number)args.get(0)).floatValue());
+			BigDecimal rounded = bd.setScale(((Number)args.get(1)).intValue(), BigDecimal.ROUND_HALF_UP);
+
+			return rounded.floatValue();
 		}
 	}
 }

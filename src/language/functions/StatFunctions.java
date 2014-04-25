@@ -14,7 +14,7 @@ public class StatFunctions {
 		envr.putVar("avg", new AverageFunction());
 		envr.putVar("mean", new AverageFunction());
 		envr.putVar("variance", new VarianceFunction());
-		envr.putVar("stddev", new VarianceFunction());
+		envr.putVar("stddev", new StddevFunction());
 	}
 
 	private static class AverageFunction implements Function {

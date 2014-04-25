@@ -22,6 +22,10 @@ public class CSVReader implements DocumentReader {
 				readLine = reader.readLine();
 				String[] values = readLine.split(splitBy);
 				for (int x = 0; x < dest.getWidth(); x++) {
+					if(values[x].equals(" ")) {
+						values[x] = "";
+					}
+					
 					dest.getCellAtIndex(x, y).setInput(values[x]);
 				}
 			}

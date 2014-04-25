@@ -18,9 +18,8 @@ public class TrigFunctions {
 		@Override
 		public Object eval(LinkedList<Object> args) throws LangParseException {
 			LangMath.validateParamCount(args, 1);
-			LangMath.validateNumber(args.get(0));
 
-			return LangMath.sin((Number) args.get(0));
+			return LangMath.sin(args.get(0));
 		}
 	}
 
@@ -29,9 +28,8 @@ public class TrigFunctions {
 		@Override
 		public Object eval(LinkedList<Object> args) throws LangParseException {
 			LangMath.validateParamCount(args, 1);
-			LangMath.validateNumber(args.get(0));
 
-			return LangMath.cos((Number) args.get(0));
+			return LangMath.cos(args.get(0));
 		}
 	}
 
@@ -40,9 +38,8 @@ public class TrigFunctions {
 		@Override
 		public Object eval(LinkedList<Object> args) throws LangParseException {
 			LangMath.validateParamCount(args, 1);
-			LangMath.validateNumber(args.get(0));
 
-			return LangMath.tan((Number) args.get(0));
+			return LangMath.tan(args.get(0));
 		}
 	}
 }
