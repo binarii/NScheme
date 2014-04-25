@@ -18,9 +18,9 @@ public class TableEnvironment extends Environment {
 
 	@Override
 	public Object findVar(String s) {
-		Object cellRef = parseCell(s);
+		Cell cellRef = parseCell(s);
 		if (cellRef != null) {
-			return cellRef;
+			return Parser.atomize(cellRef.getString());
 		}
 
 		Object rangeRef = parseRange(s);

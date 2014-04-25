@@ -88,6 +88,7 @@ public class Parser {
 		TableEnvironment tableEnvr = new TableEnvironment(table);
 		Environment envr = new Environment(tableEnvr);
 
+		table.setEnvironment(envr);
 		Language.addDefaultVariables(envr);
 
 		table.getCellAtIndex(0, 0).setString("1");

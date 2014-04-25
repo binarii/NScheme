@@ -2,11 +2,15 @@ package environment;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
+import language.Language;
+import language.Parser;
+import language.exception.LangParseException;
 import view.IViewCell;
 
 public class Cell implements CellListener, IViewCell {
@@ -26,6 +30,7 @@ public class Cell implements CellListener, IViewCell {
 	private Table _parent;
 
 	public Cell(int x, int y, Table parent) {
+		_listeners = new LinkedList<CellListener>();
 		_displayValue = "";
 		_inputValue = "";
 
@@ -44,11 +49,32 @@ public class Cell implements CellListener, IViewCell {
 		return _listeners;
 	}
 
+	public void addListener(CellListener l) {
+		_listeners.add(l);
+	}
+
+	public void removeListener(CellListener l) {
+		_listeners.remove(l);
+	}
+
+	public void notifyListeners() {
+		for (CellListener l : _listeners) {
+			l.update();
+		}
+	}
+
 	@Override
 	public void setString(String s) {
-		_displayValue = s;
+		ClearFormulaRefs();
 		_inputValue = s;
+		if (s.length() > 0 && s.charAt(0) == '=') {
+			AddFormulaRefs();
+			update();
+		} else {
+			_displayValue = s;
+		}
 		_parent.markDirty(this);
+		notifyListeners();
 	}
 
 	@Override
@@ -66,6 +92,11 @@ public class Cell implements CellListener, IViewCell {
 	@Override
 	public String getString() {
 		return _displayValue;
+	}
+
+	@Override
+	public String getInputString() {
+		return _inputValue;
 	}
 
 	@Override
@@ -118,9 +149,35 @@ public class Cell implements CellListener, IViewCell {
 		_font = f;
 	}
 
+	private void ClearFormulaRefs() {
+		LinkedList<Cell> refs = Language.getFormulaReferences(_inputValue,
+				_parent.getEnvironment());
+
+		for (Cell c : refs) {
+			c.removeListener(this);
+		}
+	}
+
+	private void AddFormulaRefs() {
+		LinkedList<Cell> refs = Language.getFormulaReferences(_inputValue.substring(1),
+				_parent.getEnvironment());
+
+		for (Cell c : refs) {
+			c.addListener(this);
+		}
+	}
+
 	@Override
 	public void update() {
+		try {
+			Object tokens = Parser.parse(_inputValue.substring(1));
+			Object result = Language.eval(tokens, _parent.getEnvironment());
 
+			_displayValue = result.toString();
+
+		} catch (LangParseException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	/**

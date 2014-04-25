@@ -2,6 +2,8 @@ package language;
 
 import java.util.LinkedList;
 
+import environment.Cell;
+import environment.Table;
 import language.exception.ArgumentCountException;
 import language.exception.LangParseException;
 import language.exception.UndeclaredIdenException;
@@ -11,6 +13,7 @@ import language.functions.Function;
 import language.functions.GeneralFunctions;
 import language.functions.StatFunctions;
 import language.functions.TrigFunctions;
+import language.functions.UserFunction;
 
 public class Language {
 
@@ -28,11 +31,8 @@ public class Language {
 			// Check built in functions or call procedure
 			LinkedList<Object> l = (LinkedList<Object>) x;
 
-			// Fist element should always be a string
-			String s = (String) l.get(0);
-
 			// Evaluate if differently
-			if (s.equals("if")) {
+			if (l.get(0) instanceof String && l.get(0).equals("if")) {
 				if (l.size() != 4) {
 					throw new ArgumentCountException(3, l.size() - 1);
 				}
@@ -43,6 +43,15 @@ public class Language {
 				Boolean cond = (Boolean) Language.eval(test, env);
 				return Language.eval(cond ? conseq : alt, env);
 
+			} else if (l.get(0) instanceof String && l.get(0).equals("lambda")) {
+				if (l.size() != 3) {
+					throw new ArgumentCountException(2, l.size() - 1);
+				}
+
+				Object args = l.get(1);
+				Object function = l.get(2);
+
+				return new UserFunction((LinkedList<Object>) args, function, env);
 			} else { // Else it is a procedure
 				LinkedList<Object> exps = new LinkedList<Object>();
 				for (Object t : l) { // Recursively eval all the parameters
@@ -59,6 +68,22 @@ public class Language {
 		}
 
 		throw new LangParseException("ERROR: Error parsing input");
+	}
+
+	public static LinkedList<Cell> getFormulaReferences(String s, Environment envr) {
+		LinkedList<Cell> cells = new LinkedList<Cell>();
+		LinkedList<String> tokens = Parser.tokenize(s);
+		Table table = envr.getTable();
+		TableEnvironment tEvnt = new TableEnvironment(table);
+
+		for (String t : tokens) {
+			Object ref = tEvnt.parseCell(s);
+			if (ref instanceof Cell) {
+				cells.add((Cell) ref);
+			}
+		}
+
+		return cells;
 	}
 
 	public static void addDefaultVariables(Environment envr) {

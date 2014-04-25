@@ -5,10 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import language.Environment;
 import view.IViewCell;
 import view.IViewTable;
 
 public class Table implements IViewTable {
+	private Environment _envr;
 	private Cell _selected;
 	private Cell[][] _cells;
 	private int[] _rowSizes;
@@ -66,6 +68,14 @@ public class Table implements IViewTable {
 		for (int i = 0; i < _colSizes.length; i++) {
 			_colSizes[i] = DEFAULT_COL_SIZE;
 		}
+	}
+
+	public void setEnvironment(Environment envr) {
+		_envr = envr;
+	}
+
+	public Environment getEnvironment() {
+		return _envr;
 	}
 
 	public void addListener(TableListener listener) {
