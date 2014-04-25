@@ -180,7 +180,9 @@ public class Cell implements CellListener, IViewCell {
 			refs = Language.getFormulaReferences(input, env);
 
 			for (Cell c : refs) {
-				c.addListener(this);
+				if (c != this) {
+					c.addListener(this);
+				}
 			}
 		}
 	}
