@@ -1,3 +1,8 @@
+/**
+ * CSVReader
+ * Implements DocumentWriter.
+ * Used to read a Comma Separated Value (CSV) file into the current document.
+ */
 package environment.filesystem;
 
 import java.io.BufferedReader;
