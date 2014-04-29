@@ -38,6 +38,11 @@ public class TableEnvironment extends Environment {
 	public void putVar(String k, Object v) {
 		// Dont allow addition of variables
 	}
+	
+	@Override
+	public void setVar(String k, Object v) {
+		
+	}
 
 	@Override
 	public Table getTable() {

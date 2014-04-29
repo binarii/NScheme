@@ -25,6 +25,15 @@ public class Environment {
 	public void putVar(String k, Object v) {
 		_envrVariables.put(k, v);
 	}
+	
+	public void setVar(String k, Object v) {
+		Object obj = _envrVariables.get(k);
+		if(obj == null) {
+			_parent.setVar(k, v);
+		} else { // else in this level, set variable
+			_envrVariables.put(k, v);
+		}		
+	}
 
 	public Table getTable() {
 		return _parent.getTable();

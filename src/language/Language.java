@@ -6,6 +6,7 @@ import environment.Cell;
 import environment.Range;
 import environment.Table;
 import language.exception.ArgumentCountException;
+import language.exception.ArgumentTypeException;
 import language.exception.LangParseException;
 import language.exception.UndeclaredIdenException;
 import language.functions.ArithmaticFunctions;
@@ -53,6 +54,36 @@ public class Language {
 				Object function = l.get(2);
 
 				return new UserFunction((LinkedList<Object>) args, function, env);
+			} else if (l.get(0) instanceof String && l.get(0).equals("set!")) {
+				if (l.size() != 3) {
+					throw new ArgumentCountException(2, l.size() - 1);
+				}
+
+				Object iden = l.get(1);
+				Object value = Language.eval(l.get(2), env);
+				
+				if(iden instanceof String) {
+					env.setVar((String)iden, value);
+				} else {
+					throw new ArgumentTypeException(String.class, iden.getClass(), 0);
+				}
+				
+				return value;
+			} else if (l.get(0) instanceof String && l.get(0).equals("define")) {
+				if (l.size() != 3) {
+					throw new ArgumentCountException(2, l.size() - 1);
+				}
+
+				Object iden = l.get(1);
+				Object value = Language.eval(l.get(2), env);
+				
+				if(iden instanceof String) {
+					env.putVar((String)iden, value);
+				} else {
+					throw new ArgumentTypeException(String.class, iden.getClass(), 0);
+				}
+				
+				return value;
 			} else { // Else it is a procedure
 				LinkedList<Object> exps = new LinkedList<Object>();
 				for (Object t : l) { // Recursively eval all the parameters
