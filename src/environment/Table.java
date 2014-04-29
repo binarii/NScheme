@@ -9,6 +9,10 @@ import language.Environment;
 import view.IViewCell;
 import view.IViewTable;
 
+/**
+ * The table is a composition of cells allowing for the user to store tabulated
+ * information.
+ */
 public class Table implements IViewTable {
 	private Environment _envr;
 	private Cell _selected;
@@ -107,6 +111,10 @@ public class Table implements IViewTable {
 		setSelected((Cell) shiftCell(_selected, x, y));
 	}
 
+	/**
+	 * Return the cell relative to the one provided by the x and y values. The
+	 * cell is guaranteed to be within bounds.
+	 */
 	public IViewCell shiftCell(IViewCell cell, int x, int y) {
 		if (cell == null) {
 			return null;
@@ -117,6 +125,10 @@ public class Table implements IViewTable {
 		return getCellAtIndex(newX, newY);
 	}
 
+	/**
+	 * Get cell at array index x, and y. This function will return the closest
+	 * in bound cell.
+	 */
 	@Override
 	public IViewCell getCellAtIndex(int x, int y) {
 		x = Math.min(_width - 1, Math.max(0, x));
@@ -124,6 +136,9 @@ public class Table implements IViewTable {
 		return _cells[x][y];
 	}
 
+	/**
+	 * Gets the cell at the specified screen position.
+	 */
 	@Override
 	public IViewCell getCellAtPosition(int x, int y) {
 		int indexX = 0;

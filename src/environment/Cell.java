@@ -14,6 +14,11 @@ import language.Parser;
 import language.exception.LangParseException;
 import view.IViewCell;
 
+/**
+ * The cell is a representation of one data point in the table. It contains
+ * information on its value and its appearance. The cell is able to recalculate
+ * its function through the language library.
+ */
 public class Cell implements CellListener, IViewCell {
 	private List<CellListener> _listeners;
 
@@ -64,6 +69,9 @@ public class Cell implements CellListener, IViewCell {
 		}
 	}
 
+	/**
+	 * This function will serialize the input and update its listeners
+	 */
 	@Override
 	public void setInput(Object o) {
 		ClearFormulaRefs();
@@ -157,9 +165,12 @@ public class Cell implements CellListener, IViewCell {
 		_font = f;
 	}
 
+	/**
+	 * Clear the cell reference list. If the input changes, it will no longer
+	 * rely on the same input cells.
+	 */
 	private void ClearFormulaRefs() {
 		if (isFunction(_inputValue)) {
-
 			LinkedList<Cell> refs;
 			String input = ((String) _inputValue).substring(1);
 			Environment env = _parent.getEnvironment();
@@ -171,6 +182,9 @@ public class Cell implements CellListener, IViewCell {
 		}
 	}
 
+	/**
+	 * Add this cell as a listener to the cells it references in its formula.
+	 */
 	private void AddFormulaRefs() {
 		if (_inputValue instanceof String) {
 
@@ -187,6 +201,9 @@ public class Cell implements CellListener, IViewCell {
 		}
 	}
 
+	/**
+	 * When updating the cell, evaluate the function and place the result.
+	 */
 	@Override
 	public void update() {
 		try {

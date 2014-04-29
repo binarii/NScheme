@@ -1,17 +1,15 @@
-/**
- * CSVReader
- * Implements DocumentWriter.
- * Used to read a Comma Separated Value (CSV) file into the current document.
- */
 package environment.filesystem;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import language.TableEnvironment;
 import environment.Table;
 
+/**
+ * CSVReader - Implements DocumentWriter. Used to read a Comma Separated Value
+ * (CSV) file into the current document.
+ */
 public class CSVReader implements DocumentReader {
 
 	@Override
@@ -27,10 +25,10 @@ public class CSVReader implements DocumentReader {
 				readLine = reader.readLine();
 				String[] values = readLine.split(splitBy);
 				for (int x = 0; x < dest.getWidth(); x++) {
-					if(values[x].equals(" ")) {
+					if (values[x].equals(" ")) {
 						values[x] = "";
 					}
-					
+
 					dest.getCellAtIndex(x, y).setInput(values[x]);
 				}
 			}
