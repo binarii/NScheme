@@ -1,3 +1,9 @@
+/**
+ * CSVWriter
+ * Extends from Document Writer.
+ * Used to write the current document to a Comma Separated Value sheet
+ * (CSV).
+ */
 package environment.filesystem;
 
 import java.io.FileWriter;
