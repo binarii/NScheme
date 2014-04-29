@@ -4,6 +4,10 @@ import environment.Cell;
 import environment.Range;
 import environment.Table;
 
+/**
+ * The table environment will be the root for all environments, the class will
+ * find variables differently by using parsing rather than a hash table.
+ */
 public class TableEnvironment extends Environment {
 	Table _table;
 
@@ -20,7 +24,7 @@ public class TableEnvironment extends Environment {
 	public Object findVar(String s) {
 		Cell cellRef = parseCell(s);
 		if (cellRef != null) {
-			if(cellRef.getDisplay() instanceof String) {
+			if (cellRef.getDisplay() instanceof String) {
 				return Parser.atomize(cellRef.getString());
 			}
 			return cellRef.getDisplay();
@@ -38,10 +42,10 @@ public class TableEnvironment extends Environment {
 	public void putVar(String k, Object v) {
 		// Dont allow addition of variables
 	}
-	
+
 	@Override
 	public void setVar(String k, Object v) {
-		
+
 	}
 
 	@Override

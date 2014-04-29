@@ -12,12 +12,20 @@ import environment.Table;
 
 public class Parser {
 
+	/**
+	 * Tokenize the string into a lexical token list. 
+	 * eg. (sum (- 6 2) 4) => [sum, [-, 6, 2], 4]
+	 */
 	public static Object parse(String s) throws LangParseException {
 		LinkedList<String> tokens = tokenize(s);
 		Object temp = readToken(tokens);
 		return temp;
 	}
 
+	/**
+	 * Splits the initial string into a non lexical tokenized list, this list is
+	 * the string split by spaces and will include all characters.
+	 */
 	public static LinkedList<String> tokenize(String s) {
 		String tmp = s.replace("(", " ( ");
 		tmp = tmp.replace(")", " ) ");
@@ -33,6 +41,9 @@ public class Parser {
 		return tokens;
 	}
 
+	/**
+	 * Read the tokenized list and sort it into a lexical nested list.
+	 */
 	public static Object readToken(LinkedList<String> tokens) throws LangParseException {
 		if (tokens.size() == 0) {
 			throw new EOFException();
@@ -45,7 +56,7 @@ public class Parser {
 			while ((obj = tokens.peek()) != null && !obj.equals(")")) {
 				l.add(readToken(tokens));
 			}
-			if(tokens.size() == 0) {
+			if (tokens.size() == 0) {
 				throw new EOFException();
 			}
 			tokens.pop();
@@ -57,6 +68,9 @@ public class Parser {
 		}
 	}
 
+	/**
+	 * Given a single string, try and parse it to the best format.
+	 */
 	public static Object atomize(String s) {
 		try {
 			return Integer.parseInt(s);
@@ -66,47 +80,6 @@ public class Parser {
 			} catch (NumberFormatException er) {
 				return s;
 			}
-		}
-	}
-
-	public static void testParser(Parser parser, Environment envr, String test) {
-		try {
-			Object tokens = Parser.parse(test);
-			System.out.println(tokens);
-
-			Object result = Language.eval(tokens, envr);
-			System.out.println(result);
-
-		} catch (LangParseException e) {
-			System.out.println(e.getMessage());
-		}
-	}
-
-	public static void main(String[] args) {
-		Parser parser = new Parser();
-		Table table = new Table();
-		TableEnvironment tableEnvr = new TableEnvironment(table);
-		Environment envr = new Environment(tableEnvr);
-
-		table.setEnvironment(envr);
-		Language.addDefaultVariables(envr);
-
-		table.getCellAtIndex(0, 0).setInput("1");
-		table.getCellAtIndex(0, 1).setInput("2");
-		table.getCellAtIndex(0, 2).setInput("3");
-		table.getCellAtIndex(0, 3).setInput("4");
-		table.getCellAtIndex(0, 4).setInput("5");
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-		String input = "";
-		while (true) {
-			try {
-				input = br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			testParser(parser, envr, input);
 		}
 	}
 }
