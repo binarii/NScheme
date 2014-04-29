@@ -10,8 +10,15 @@ import language.exception.ArgumentCountException;
 import language.exception.ArgumentTypeException;
 import language.exception.LangParseException;
 
+/**
+ * Class to support the general math functionality of the program. Performs many
+ * of the input sterilization that is required to validate input.
+ */
 public class LangMath {
 
+	/**
+	 * Apply the given operation to the linked list of input recursively.
+	 */
 	public static Object simpleApply(Object accum, ApplyOp op, LinkedList<Object> list)
 			throws LangParseException {
 
@@ -31,6 +38,11 @@ public class LangMath {
 		return accum;
 	}
 
+	/**
+	 * This does the same as the apply operation but does not allow for ranges
+	 * to be input. This is required for the standard math functions such as
+	 * '-', '/' in particular.
+	 */
 	public static Object simpleApplyNoRange(Object accum, ApplyOp op, LinkedList<Object> list)
 			throws LangParseException {
 

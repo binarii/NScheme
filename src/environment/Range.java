@@ -3,6 +3,10 @@ package environment;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * A range of cells specified with the two opposite corners. It implements
+ * iterable in order to use easy for loop syntax.
+ */
 public class Range implements Iterable<Cell> {
 	private ArrayList<Cell> _cells;
 
