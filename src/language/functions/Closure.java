@@ -12,9 +12,9 @@ import language.Pair;
  */
 public class Closure extends Function {
 
-	Object _vars;
-	Object _funct;
-	Environment _parent;
+	protected Object _vars;
+	protected Object _funct;
+	protected Environment _parent;
 
 	public Closure(Object vars, Object func, Environment parent) {
 		_vars = vars;
@@ -24,6 +24,12 @@ public class Closure extends Function {
 
 	@Override
 	public Object apply(Object vals) {
+		Environment temp = bingArgs(vals);
+
+		return Language.eval(_funct, temp);
+	}
+
+	public Environment bingArgs(Object vals) {
 		validateArgCount(vals, length(_vars));
 		Environment temp = new Environment(_parent);
 
@@ -34,8 +40,11 @@ public class Closure extends Function {
 			vars = rest(vars);
 			vals = rest(vals);
 		}
+		return temp;
+	}
 
-		return Language.eval(_funct, temp);
+	public Object getBody() {
+		return _funct;
 	}
 
 	@Override

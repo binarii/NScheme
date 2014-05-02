@@ -20,71 +20,76 @@ public class Language extends LangUtil {
 	 * function.
 	 */
 	public static Object eval(Object x, Environment env) {
-		// If the object is a string, find its reference in the environment.
-		if (x instanceof String) {
-			String s = (String) x;
-			Object result = env.findVar(s);
-			return result;
+		while (true) {
+			// If the object is a string, find its reference in the environment.
+			if (x instanceof String) {
+				String s = (String) x;
+				Object result = env.findVar(s);
+				return result;
 
-		} else if (!(x instanceof Pair)) {
-			// Must be an integer or double
-			return x;
-		} else {
-			Object fn = first(x);
-			Object args = rest(x);
-
-			// Evaluate if differently
-			if (fn.equals("if")) {
-				validateArgCount(args, 3);
-
-				Object test = first(args);
-				Object conseq = second(args);
-				Object alt = third(args);
-
-				Boolean cond = (Boolean) Language.eval(test, env);
-				return Language.eval(cond ? conseq : alt, env);
-
-			} else if (fn.equals("lambda")) {
-				validateArgCount(args, 2);
-
-				Object arguments = first(args);
-				Object function = second(args);
-
-				return new Closure(arguments, function, env);
-			} else if (fn.equals("set!")) {
-				validateArgCount(args, 2);
-
-				Object iden = first(args);
-				Object value = Language.eval(second(args), env);
-				env.putVar(str(iden), value);
-
-				return value;
-			} else if (fn.equals("define")) {
-				validateArgCount(args, 2);
-
-				Object iden = first(args);
-				Object value = Language.eval(second(args), env);
-				env.putVar(str(iden), value);
-
-				return value;
+			} else if (!(x instanceof Pair)) {
+				// Must be an integer or double
+				return x;
 			} else {
-				/*
-				 * Otherwise the input is a linked list. In this case
-				 * recursively evaluate all parameters and attempt to call the
-				 * first argument (a function) on the rest of the parameters.
-				 */
-				fn = eval(fn, env);
-				args = evalList(args, env);
+				Object fn = first(x);
+				Object args = rest(x);
 
-				// Call the function specified
-				if (fn instanceof Function) {
-					Function proc = (Function) fn;
-					return proc.apply(args);
+				// Evaluate if differently
+				if (fn.equals("if")) {
+					validateArgCount(args, 3);
+
+					Object test = first(args);
+					Object conseq = second(args);
+					Object alt = third(args);
+
+					Boolean cond = (Boolean) Language.eval(test, env);
+					x = cond ? conseq : alt;
+				} else if (fn.equals("lambda")) {
+					validateArgCount(args, 2);
+
+					Object arguments = first(args);
+					Object function = second(args);
+
+					return new Closure(arguments, function, env);
+				} else if (fn.equals("set!")) {
+					validateArgCount(args, 2);
+
+					Object iden = first(args);
+					Object value = Language.eval(second(args), env);
+					env.putVar(str(iden), value);
+
+					return value;
+				} else if (fn.equals("define")) {
+					validateArgCount(args, 2);
+
+					Object iden = first(args);
+					Object value = Language.eval(second(args), env);
+					env.putVar(str(iden), value);
+
+					return value;
+				} else {
+					/*
+					 * Otherwise the input is a linked list. In this case
+					 * recursively evaluate all parameters and attempt to call
+					 * the first argument (a function) on the rest of the
+					 * parameters.
+					 */
+					fn = eval(fn, env);
+					args = evalList(args, env);
+
+					// Call the function specified
+					if (fn instanceof Function) {
+						if (fn instanceof Closure) {
+							env = ((Closure) fn).bingArgs(args);
+							x = ((Closure) fn).getBody();
+						} else {
+							Function proc = (Function) fn;
+							return proc.apply(args);
+						}
+					}
 				}
 			}
 		}
-
-		return error("error parsing input");
 	}
 
 	protected static Pair evalList(Object list, Environment env) {

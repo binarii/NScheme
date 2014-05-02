@@ -74,7 +74,13 @@ public class Parser extends LangUtil {
 			try {
 				return Double.parseDouble(s);
 			} catch (NumberFormatException er) {
-				return s;
+				if (s.equals("#t")) {
+					return TRUE;
+				} else if (s.equals("#f")) {
+					return FALSE;
+				} else {
+					return s;
+				}
 			}
 		}
 	}
