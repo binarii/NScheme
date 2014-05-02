@@ -40,7 +40,7 @@ public class Language {
 
 			// Evaluate if differently
 			if (l.get(0) instanceof String && l.get(0).equals("if")) {
-				LangMath.validateParamCount(l, 3);
+				LangMath.validateParamCount(l, 4);
 
 				Object test = l.get(1);
 				Object conseq = l.get(2);
@@ -50,14 +50,14 @@ public class Language {
 				return Language.eval(cond ? conseq : alt, env);
 
 			} else if (l.get(0) instanceof String && l.get(0).equals("lambda")) {
-				LangMath.validateParamCount(l, 2);
+				LangMath.validateParamCount(l, 3);
 
 				Object args = l.get(1);
 				Object function = l.get(2);
 
 				return new UserFunction((LinkedList<Object>) args, function, env);
 			} else if (l.get(0) instanceof String && l.get(0).equals("set!")) {
-				LangMath.validateParamCount(l, 2);
+				LangMath.validateParamCount(l, 3);
 
 				Object iden = l.get(1);
 				Object value = Language.eval(l.get(2), env);
@@ -70,7 +70,7 @@ public class Language {
 
 				return value;
 			} else if (l.get(0) instanceof String && l.get(0).equals("define")) {
-				LangMath.validateParamCount(l, 2);
+				LangMath.validateParamCount(l, 3);
 
 				Object iden = l.get(1);
 				Object value = Language.eval(l.get(2), env);
