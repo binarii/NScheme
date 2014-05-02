@@ -34,7 +34,11 @@ public class TableEnvironment extends Environment {
 		if (rangeRef != null) {
 			Pair result = null;
 			for (Cell c : rangeRef) {
-				result = new Pair(c.getDisplay(), result);
+				if (c.getDisplay() instanceof String) {
+					result = new Pair(Parser.atomize(c.getString()), result);
+				} else {
+					result = new Pair(c.getDisplay(), result);
+				}
 			}
 			return LangUtil.reverse(result);
 		}
