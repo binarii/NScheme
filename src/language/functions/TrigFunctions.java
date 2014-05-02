@@ -1,9 +1,6 @@
 package language.functions;
 
-import java.util.LinkedList;
-
 import language.Environment;
-import language.exception.LangParseException;
 
 public class TrigFunctions {
 
@@ -13,33 +10,27 @@ public class TrigFunctions {
 		envr.putVar("tan", new TanFunction());
 	}
 
-	private static class SinFunction implements Function {
-
+	private static class SinFunction extends Function {
 		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-
-			return LangMath.sin(args.get(0));
+		public Object apply(Object args) {
+			validateArgCount(args, 1);
+			return Math.sin(numDouble(first(args)));
 		}
 	}
 
-	private static class CosFunction implements Function {
-
+	private static class CosFunction extends Function {
 		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-
-			return LangMath.cos(args.get(0));
+		public Object apply(Object args) {
+			validateArgCount(args, 1);
+			return Math.cos(numDouble(first(args)));
 		}
 	}
 
-	private static class TanFunction implements Function {
-
+	private static class TanFunction extends Function {
 		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-
-			return LangMath.tan(args.get(0));
+		public Object apply(Object args) {
+			validateArgCount(args, 1);
+			return Math.tan(numDouble(first(args)));
 		}
 	}
 }

@@ -1,14 +1,12 @@
 package language.functions;
 
-import java.util.LinkedList;
-
-import language.exception.LangParseException;
+import language.LangUtil;
 
 /**
  * A general interface for functions within the language. They are passed a list
  * of arguments that a already computed.
  */
-public interface Function {
+public abstract class Function extends LangUtil {
 
-	public Object eval(LinkedList<Object> args) throws LangParseException;
+	public abstract Object apply(Object args);
 }

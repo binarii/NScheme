@@ -1,138 +1,80 @@
 package language.functions;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
 import java.util.Random;
 
 import language.Environment;
-import language.exception.LangParseException;
 
 public class GeneralFunctions {
 
 	public static void addFunctions(Environment envr) {
-		envr.putVar("abs", new AbsFunction());
-		envr.putVar("ceil", new CeilFunction());
-		envr.putVar("floor", new FloorFunction());
-		envr.putVar("sqrt", new SqrtFunction());
-		envr.putVar("mod", new ModFunction());
-		envr.putVar("pow", new PowerFunction());
-		envr.putVar("rand", new RandFunction());
-		envr.putVar("int", new IntFunction());
-		envr.putVar("float", new FloatFunction());
-		envr.putVar("round", new RoundFunction());
+		envr.putVar("abs", new GeneralFunction(ABS, 1));
+		envr.putVar("ceil", new GeneralFunction(CEIL, 1));
+		envr.putVar("floor", new GeneralFunction(FLOOR, 1));
+		envr.putVar("sqrt", new GeneralFunction(SQRT, 1));
+		envr.putVar("mod", new GeneralFunction(MOD, 2));
+		envr.putVar("pow", new GeneralFunction(POW, 2));
+		envr.putVar("rand", new GeneralFunction(RAND, 0));
+		envr.putVar("int", new GeneralFunction(INT, 1));
+		envr.putVar("float", new GeneralFunction(FLOAT, 1));
+		envr.putVar("round", new GeneralFunction(ROUND, 2));
 	}
 
-	private static class AbsFunction implements Function {
+	private static final int ABS = 0;
+	private static final int MOD = 1;
+	private static final int POW = 2;
+	private static final int CEIL = 3;
+	private static final int SQRT = 4;
+	private static final int RAND = 5;
+	private static final int FLOOR = 6;
+	private static final int ROUND = 7;
+	private static final int FLOAT = 8;
+	private static final int INT = 9;
 
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-			LangMath.validateNumber(args.get(0));
+	private static class GeneralFunction extends Function {
+		private int _type;
+		private int _argCount;
 
-			return LangMath.abs((Number) args.get(0));
+		public GeneralFunction(int type, int argc) {
+			_type = type;
+			_argCount = argc;
 		}
-	}
-
-	private static class CeilFunction implements Function {
 
 		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-			LangMath.validateNumber(args.get(0));
-
-			return LangMath.ceiling((Number) args.get(0));
-		}
-	}
-
-	private static class FloorFunction implements Function {
-
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-			LangMath.validateNumber(args.get(0));
-
-			return LangMath.floor((Number) args.get(0));
-		}
-	}
-
-	private static class SqrtFunction implements Function {
-
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-			LangMath.validateNumber(args.get(0));
-
-			return LangMath.sqrt((Number) args.get(0));
-		}
-	}
-
-	private static class ModFunction implements Function {
-
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 2);
-			LangMath.validateNumber(args.get(0));
-			LangMath.validateNumber(args.get(1));
-
-			return LangMath.mod((Number) args.get(0), (Number) args.get(1));
-		}
-	}
-
-	private static class PowerFunction implements Function {
-
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 2);
-			LangMath.validateNumber(args.get(0));
-			LangMath.validateNumber(args.get(1));
-
-			return LangMath.power((Number) args.get(0), (Number) args.get(1));
-		}
-	}
-
-	private static class RandFunction implements Function {
-
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 0);
-
-			return new Random().nextInt();
-		}
-	}
-
-	private static class IntFunction implements Function {
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-			LangMath.validateNumber(args.get(0));
-
-			return ((Number) args.get(0)).intValue();
-		}
-	}
-
-
-	private static class FloatFunction implements Function {
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-			LangMath.validateNumber(args.get(0));
-
-			return ((Number) args.get(0)).floatValue();
-		}
-	}
-
-	private static class RoundFunction implements Function {
-
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 2);
-			LangMath.validateNumber(args.get(0));
-			LangMath.validateNumber(args.get(1));
-			
-			BigDecimal bd = new BigDecimal(((Number)args.get(0)).floatValue());
-			BigDecimal rounded = bd.setScale(((Number)args.get(1)).intValue(), BigDecimal.ROUND_HALF_UP);
-
-			return rounded.floatValue();
+		public Object apply(Object args) {
+			validateArgCount(args, _argCount);
+			Object x = first(args);
+			switch (_type) {
+			case ABS:
+				return Math.abs(numDouble(x));
+			case MOD:
+				if (first(args) instanceof Integer && second(args) instanceof Integer) {
+					return numInt(x) % numInt(second(args));
+				} else {
+					return numDouble(x) % numDouble(second(args));
+				}
+			case POW:
+				return Math.pow(numDouble(x), numDouble(second(args)));
+			case CEIL:
+				return Math.ceil(numDouble(x));
+			case SQRT:
+				return Math.sqrt(numDouble(x));
+			case RAND:
+				return new Random().nextInt();
+			case FLOOR:
+				return Math.floor(numDouble(x));
+			case ROUND:
+				final int roundType = BigDecimal.ROUND_HALF_UP;
+				BigDecimal bigdec = new BigDecimal(numDouble(first(args)));
+				BigDecimal rounded = bigdec.setScale(numInt(second(args)), roundType);
+				return rounded.doubleValue();
+			case FLOAT:
+				return numDouble(x);
+			case INT:
+				return numInt(x);
+			default:
+				return null;
+			}
 		}
 	}
 }

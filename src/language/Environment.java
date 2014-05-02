@@ -19,7 +19,7 @@ public class Environment {
 
 	public Object findVar(String s) {
 		Object obj = _envrVariables.get(s);
-		if (obj == null) {
+		if (obj == null && !_envrVariables.containsKey(s)) {
 			return _parent.findVar(s);
 		}
 
