@@ -35,7 +35,7 @@ public class CoreFunctions {
 				validateArgCount(args, _argc);
 			}
 			Object x = first(args);
-			Object y = rest(args);
+			Object y = second(args);
 
 			switch (_type) {
 			case CONS:

@@ -18,7 +18,12 @@ public class Closure extends Function {
 
 	public Closure(Object vars, Object func, Environment parent) {
 		_vars = vars;
-		_funct = func;
+		if (length(func) > 1) {
+			_funct = cons("begin", func);
+		} else {
+			_funct = first(func);
+		}
+
 		_parent = parent;
 	}
 

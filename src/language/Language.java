@@ -44,11 +44,17 @@ public class Language extends LangUtil {
 
 					Boolean cond = (Boolean) Language.eval(test, env);
 					x = cond ? conseq : alt;
+				} else if (fn.equals("begin")) {
+					while (rest(args) != null) {
+						// If rest is null we are on the last item
+						eval(first(args), env);
+						args = rest(args);
+					}
+					x = first(args);
 				} else if (fn.equals("lambda")) {
-					validateArgCount(args, 2);
 
 					Object arguments = first(args);
-					Object function = second(args);
+					Object function = rest(args);
 
 					return new Closure(arguments, function, env);
 				} else if (fn.equals("set!")) {
