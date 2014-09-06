@@ -11,7 +11,6 @@ import javax.swing.border.Border;
 import language.Environment;
 import language.Language;
 import language.Parser;
-import language.exception.LangParseException;
 import view.IViewCell;
 
 /**
@@ -214,7 +213,7 @@ public class Cell implements CellListener, IViewCell {
 			_displayValue = result;
 			_parent.markDirty(this);
 			notifyListeners();
-		} catch (LangParseException e) {
+		} catch (RuntimeException e) {
 			System.out.println(e.getMessage());
 			_displayValue = "ERROR";
 		}

@@ -5,107 +5,108 @@ import java.util.LinkedList;
 import environment.Cell;
 import environment.Range;
 import environment.Table;
-import language.exception.ArgumentCountException;
-import language.exception.ArgumentTypeException;
-import language.exception.LangParseException;
-import language.exception.UndeclaredIdenException;
-import language.functions.ArithmaticFunctions;
 import language.functions.ConditionalFunctions;
+import language.functions.CoreFunctions;
 import language.functions.Function;
 import language.functions.GeneralFunctions;
-import language.functions.LangMath;
 import language.functions.StatFunctions;
 import language.functions.TrigFunctions;
-import language.functions.UserFunction;
+import language.functions.Closure;
 
-public class Language {
+public class Language extends LangUtil {
 
 	/**
 	 * The evaluate function recursively evaluates the arguments of the
 	 * function.
 	 */
-	public static Object eval(Object x, Environment env) throws LangParseException {
-		// If the object is a string, find its reference in the environment.
-		if (x instanceof String) {
-			String s = (String) x;
-			Object result = env.findVar(s);
-			if (result == null) {
-				throw new UndeclaredIdenException(s);
-			}
-			return result;
+	public static Object eval(Object x, Environment env) {
+		while (true) {
+			// If the object is a string, find its reference in the environment.
+			if (x instanceof String) {
+				String s = (String) x;
+				Object result = env.findVar(s);
+				return result;
 
-		} else if (x instanceof LinkedList) {
-			// Check built in functions or call procedure
-			LinkedList<Object> l = (LinkedList<Object>) x;
-
-			// Evaluate if differently
-			if (l.get(0) instanceof String && l.get(0).equals("if")) {
-				LangMath.validateParamCount(l, 3);
-
-				Object test = l.get(1);
-				Object conseq = l.get(2);
-				Object alt = l.get(3);
-
-				Boolean cond = (Boolean) Language.eval(test, env);
-				return Language.eval(cond ? conseq : alt, env);
-
-			} else if (l.get(0) instanceof String && l.get(0).equals("lambda")) {
-				LangMath.validateParamCount(l, 2);
-
-				Object args = l.get(1);
-				Object function = l.get(2);
-
-				return new UserFunction((LinkedList<Object>) args, function, env);
-			} else if (l.get(0) instanceof String && l.get(0).equals("set!")) {
-				LangMath.validateParamCount(l, 2);
-
-				Object iden = l.get(1);
-				Object value = Language.eval(l.get(2), env);
-
-				if (iden instanceof String) {
-					env.setVar((String) iden, value);
-				} else {
-					throw new ArgumentTypeException(String.class, iden.getClass(), 0);
-				}
-
-				return value;
-			} else if (l.get(0) instanceof String && l.get(0).equals("define")) {
-				LangMath.validateParamCount(l, 2);
-
-				Object iden = l.get(1);
-				Object value = Language.eval(l.get(2), env);
-
-				if (iden instanceof String) {
-					env.putVar((String) iden, value);
-				} else {
-					throw new ArgumentTypeException(String.class, iden.getClass(), 0);
-				}
-
-				return value;
+			} else if (!(x instanceof Pair)) {
+				// Must be an integer or double
+				return x;
 			} else {
-				/*
-				 * Otherwise the input is a linked list. In this case
-				 * recursively evaluate all parameters and attempt to call the
-				 * first argument (a function) on the rest of the parameters.
-				 */
-				LinkedList<Object> exps = new LinkedList<Object>();
+				Object fn = first(x);
+				Object args = rest(x);
 
-				// Recursively evaluate all the parameters
-				for (Object t : l) {
-					exps.add(Language.eval(t, env));
-				}
+				// Evaluate if differently
+				if (fn.equals("if")) {
+					validateArgCount(args, 3);
 
-				// Call the function specified
-				if (exps.get(0) instanceof Function) {
-					Function proc = (Function) exps.pop();
-					return proc.eval(exps);
+					Object test = first(args);
+					Object conseq = second(args);
+					Object alt = third(args);
+
+					Boolean cond = (Boolean) Language.eval(test, env);
+					x = cond ? conseq : alt;
+				} else if (fn.equals("begin")) {
+					while (rest(args) != null) {
+						// If rest is null we are on the last item
+						eval(first(args), env);
+						args = rest(args);
+					}
+					x = first(args);
+				} else if (fn.equals("lambda")) {
+
+					Object arguments = first(args);
+					Object function = rest(args);
+
+					return new Closure(arguments, function, env);
+				} else if (fn.equals("set!")) {
+					validateArgCount(args, 2);
+
+					Object iden = first(args);
+					Object value = Language.eval(second(args), env);
+					env.putVar(str(iden), value);
+
+					return value;
+				} else if (fn.equals("define")) {
+					validateArgCount(args, 2);
+
+					Object iden = first(args);
+					Object value = Language.eval(second(args), env);
+					env.putVar(str(iden), value);
+
+					return value;
+				} else {
+					/*
+					 * Otherwise the input is a linked list. In this case
+					 * recursively evaluate all parameters and attempt to call
+					 * the first argument (a function) on the rest of the
+					 * parameters.
+					 */
+					fn = eval(fn, env);
+					args = evalList(args, env);
+
+					// Call the function specified
+					if (fn instanceof Function) {
+						if (fn instanceof Closure) {
+							env = ((Closure) fn).bingArgs(args);
+							x = ((Closure) fn).getBody();
+						} else {
+							Function proc = (Function) fn;
+							return proc.apply(args);
+						}
+					}
 				}
 			}
-		} else { // Must be a float or integer
-			return x;
 		}
+	}
 
-		throw new LangParseException("ERROR: Error parsing input");
+	protected static Pair evalList(Object list, Environment env) {
+		if (list == null) {
+			return null;
+		} else if (!(list instanceof Pair)) {
+			error("Illegal argument list");
+			return null;
+		} else {
+			return cons(eval(first(list), env), evalList(rest(list), env));
+		}
 	}
 
 	/**
@@ -147,7 +148,7 @@ public class Language {
 		envr.putVar("PI", Math.PI);
 		envr.putVar("EULER", Math.E);
 
-		ArithmaticFunctions.addFunctions(envr);
+		CoreFunctions.addFunctions(envr);
 		ConditionalFunctions.addFunctions(envr);
 		GeneralFunctions.addFunctions(envr);
 		StatFunctions.addFunctions(envr);

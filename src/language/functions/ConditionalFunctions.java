@@ -1,110 +1,130 @@
 package language.functions;
 
-import java.util.LinkedList;
-
 import language.Environment;
-import language.exception.ArgumentCountException;
-import language.exception.ArgumentTypeException;
-import language.exception.LangParseException;
+import language.LangUtil;
+import language.Pair;
 
-public class ConditionalFunctions {
+public class ConditionalFunctions extends LangUtil {
 
 	public static void addFunctions(Environment envr) {
-		envr.putVar(">", new GreaterThanFunction());
-		envr.putVar("<", new LessThanFunction());
-		envr.putVar("=", new EqualsFunction());
+		envr.putVar(">", new CompFunction(GT));
+		envr.putVar(">=", new CompFunction(GTE));
+		envr.putVar("<", new CompFunction(LT));
+		envr.putVar("<=", new CompFunction(LTE));
+		envr.putVar("=", new CompFunction(EQUALS));
+		envr.putVar("or", new BooleanFunction(OR));
+		envr.putVar("and", new BooleanFunction(AND));
 		envr.putVar("not", new NotFunction());
-		envr.putVar("or", new OrFunction());
-		envr.putVar("and", new AndFunction());
 	}
 
-	private static class GreaterThanFunction implements Function {
+	private static final int GT = 0;
+	private static final int GTE = 1;
+	private static final int LT = 2;
+	private static final int LTE = 3;
+	private static final int EQUALS = 4;
+	private static final int OR = 5;
+	private static final int AND = 6;
 
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 2);
-			LangMath.validateNumber(args.get(0));
-			LangMath.validateNumber(args.get(1));
+	public static Object applyCompare(Object args, int op) {
+		while (rest(args) instanceof Pair) {
+			double x = numDouble(first(args));
+			args = rest(args);
+			double y = numDouble(first(args));
 
-			return LangMath.greaterThan((Number) args.get(0), (Number) args.get(1));
+			switch (op) {
+			case GT:
+				if (x <= y)
+					return FALSE;
+				break;
+			case GTE:
+				if (x < y)
+					return FALSE;
+				break;
+			case LT:
+				if (x >= y)
+					return FALSE;
+				break;
+			case LTE:
+				if (x > y)
+					return FALSE;
+				break;
+			case EQUALS:
+				if (x != y)
+					return FALSE;
+				break;
+			}
+		}
+
+		return TRUE;
+	}
+
+	public static Object applyBoolean(Object args, int op) {
+		while (args instanceof Pair) {
+			boolean curr = bool(first(args));
+			args = rest(args);
+
+			switch (op) {
+			case OR:
+				if (curr)
+					return TRUE;
+				break;
+			case AND:
+				if (!curr)
+					return FALSE;
+				break;
+			}
+		}
+
+		if (op == OR) {
+			return FALSE;
+		} else {
+			return TRUE;
 		}
 	}
 
-	private static class LessThanFunction implements Function {
+	private static class BooleanFunction extends Function {
+		private int _type;
+
+		public BooleanFunction(int type) {
+			_type = type;
+		}
 
 		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 2);
-			LangMath.validateNumber(args.get(0));
-			LangMath.validateNumber(args.get(1));
-
-			return LangMath.lessThan((Number) args.get(0), (Number) args.get(1));
+		public Object apply(Object args) {
+			switch (_type) {
+			case OR:
+				return applyBoolean(args, OR);
+			case AND:
+				return applyBoolean(args, AND);
+			default:
+				return null;
+			}
 		}
 	}
 
-	private static class EqualsFunction implements Function {
+	private static class CompFunction extends Function {
+		private int _type;
 
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 2);
-
-			return args.get(0).equals(args.get(1));
+		public CompFunction(int type) {
+			_type = type;
 		}
-	}
-
-	private static class NotFunction implements Function {
 
 		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			LangMath.validateParamCount(args, 1);
-
-			if (args.get(0) instanceof Boolean) {
-				return !((Boolean) args.get(0));
+		public Object apply(Object args) {
+			if (_type >= GT && _type <= EQUALS) {
+				return applyCompare(args, _type);
 			} else {
-				throw new ArgumentTypeException(Boolean.class, args.get(0).getClass(), 0);
+				return null;
 			}
 		}
 	}
 
-	private static class AndFunction implements Function {
-
+	private static class NotFunction extends Function {
 		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			if (args.size() == 0) {
-				throw new ArgumentCountException(2, 0);
-			}
-
-			for (Object i : args) {
-				if (i instanceof Boolean) {
-					if (!(Boolean) i) {
-						return false;
-					}
-				} else {
-					throw new ArgumentTypeException(Boolean.class, i.getClass(), 0);
-				}
-			}
-			return true;
-		}
-	}
-
-	private static class OrFunction implements Function {
-
-		@Override
-		public Object eval(LinkedList<Object> args) throws LangParseException {
-			if (args.size() == 0) {
-				throw new ArgumentCountException(2, 0);
-			}
-
-			for (Object i : args) {
-				if (i instanceof Boolean) {
-					if ((Boolean) i) {
-						return true;
-					}
-				} else {
-					throw new ArgumentTypeException(Boolean.class, i.getClass(), 0);
-				}
-			}
-			return false;
+		public Object apply(Object args) {
+			validateArgCount(args, 1);
+			boolean b = bool(first(args));
+			return !b;
 		}
 	}
 }

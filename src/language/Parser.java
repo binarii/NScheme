@@ -1,22 +1,14 @@
 package language;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.LinkedList;
 
-import language.exception.EOFException;
-import language.exception.LangParseException;
-import language.exception.UnexpectedTokenException;
-import environment.Table;
-
-public class Parser {
+public class Parser extends LangUtil {
 
 	/**
-	 * Tokenize the string into a lexical token list. 
-	 * eg. (sum (- 6 2) 4) => [sum, [-, 6, 2], 4]
+	 * Tokenize the string into a lexical token list. eg. (sum (- 6 2) 4) =>
+	 * [sum, [-, 6, 2], 4]
 	 */
-	public static Object parse(String s) throws LangParseException {
+	public static Object parse(String s) {
 		LinkedList<String> tokens = tokenize(s);
 		Object temp = readToken(tokens);
 		return temp;
@@ -42,27 +34,31 @@ public class Parser {
 	}
 
 	/**
-	 * Read the tokenized list and sort it into a lexical nested list.
+	 * Read the token list and sort it into a lexical nested list.
 	 */
-	public static Object readToken(LinkedList<String> tokens) throws LangParseException {
+	public static Object readToken(LinkedList<String> tokens) {
 		if (tokens.size() == 0) {
-			throw new EOFException();
+			return error("unexpected EOF found");
 		}
 
 		String token = tokens.pop();
 		if (token.equals("(")) {
-			LinkedList<Object> l = new LinkedList<Object>();
+
 			Object obj;
+			Object listRef = null;
+
 			while ((obj = tokens.peek()) != null && !obj.equals(")")) {
-				l.add(readToken(tokens));
+				listRef = cons(readToken(tokens), listRef);
 			}
+
 			if (tokens.size() == 0) {
-				throw new EOFException();
+				return error("unexpected EOF found");
 			}
+
 			tokens.pop();
-			return l;
+			return reverse(listRef);
 		} else if (token.equals(")")) {
-			throw new UnexpectedTokenException(")");
+			return error("unexpected ')' token");
 		} else { // Else it is a variable, number, etc.
 			return atomize(token);
 		}
@@ -76,9 +72,15 @@ public class Parser {
 			return Integer.parseInt(s);
 		} catch (NumberFormatException e) {
 			try {
-				return Float.parseFloat(s);
+				return Double.parseDouble(s);
 			} catch (NumberFormatException er) {
-				return s;
+				if (s.equals("#t")) {
+					return TRUE;
+				} else if (s.equals("#f")) {
+					return FALSE;
+				} else {
+					return s;
+				}
 			}
 		}
 	}

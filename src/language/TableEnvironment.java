@@ -30,12 +30,22 @@ public class TableEnvironment extends Environment {
 			return cellRef.getDisplay();
 		}
 
-		Object rangeRef = parseRange(s);
+		Range rangeRef = parseRange(s);
 		if (rangeRef != null) {
-			return rangeRef;
+			Pair result = null;
+			for (Cell c : rangeRef) {
+				if (c.getDisplay() instanceof String) {
+					result = new Pair(Parser.atomize(c.getString()), result);
+				} else {
+					result = new Pair(c.getDisplay(), result);
+				}
+			}
+			return LangUtil.reverse(result);
 		}
 
-		return null;
+		// We have reached the base environment and still not found the key,
+		// return error.
+		return LangUtil.error("identifier not found: " + s);
 	}
 
 	@Override
@@ -88,7 +98,6 @@ public class TableEnvironment extends Environment {
 			if (c1 == null || c2 == null) {
 				return null;
 			}
-
 			return new Range(c1, c2, _table);
 		}
 		return null;
