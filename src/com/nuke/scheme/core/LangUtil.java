@@ -1,5 +1,7 @@
 package com.nuke.scheme.core;
 
+import com.nuke.scheme.functions.Function;
+
 import java.util.LinkedList;
 
 public class LangUtil extends LangArithmetic {
@@ -135,6 +137,8 @@ public class LangUtil extends LangArithmetic {
          }
       } else if (x instanceof Pair) {
          stringifyPair((Pair) x, quoted, buf);
+      } else if (x instanceof Function) {
+         buf.append(((Function)x).toString());
       }
    }
 
