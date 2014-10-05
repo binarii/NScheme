@@ -1,6 +1,6 @@
-package language.functions;
+package com.nuke.scheme.functions;
 
-import language.Environment;
+import com.nuke.scheme.Environment;
 
 public class TrigFunctions {
 

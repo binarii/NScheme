@@ -1,8 +1,8 @@
-package language.functions;
+package com.nuke.scheme.functions;
 
-import language.Environment;
-import language.LangUtil;
-import language.Pair;
+import com.nuke.scheme.Environment;
+import com.nuke.scheme.LangUtil;
+import com.nuke.scheme.Pair;
 
 public class ConditionalFunctions extends LangUtil {
 

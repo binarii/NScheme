@@ -1,8 +1,8 @@
-package language.functions;
+package com.nuke.scheme.functions;
 
-import language.Environment;
-import language.Language;
-import language.Pair;
+import com.nuke.scheme.Environment;
+import com.nuke.scheme.Language;
+import com.nuke.scheme.Pair;
 
 /**
  * The user defined function is a list that represents the parsed input and the

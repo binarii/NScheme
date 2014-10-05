@@ -1,9 +1,9 @@
-package language.functions;
+package com.nuke.scheme.functions;
 
 import java.math.BigDecimal;
 import java.util.Random;
 
-import language.Environment;
+import com.nuke.scheme.Environment;
 
 public class GeneralFunctions {
 
