@@ -1,4 +1,4 @@
-package com.nuke.scheme;
+package com.nuke.scheme.core;
 
 
 import com.nuke.scheme.functions.*;

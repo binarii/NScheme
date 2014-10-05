@@ -1,6 +1,6 @@
 package com.nuke.scheme.functions;
 
-import com.nuke.scheme.Environment;
+import com.nuke.scheme.core.Environment;
 
 import java.math.BigDecimal;
 import java.util.Random;
