@@ -7,74 +7,138 @@ import java.util.Random;
 
 public class GeneralFunctions {
 
+   public static final Random rnd = new Random();
+
    public static void addFunctions(Environment envr) {
-      envr.putVar("abs", new GeneralFunction(ABS, 1));
-      envr.putVar("ceil", new GeneralFunction(CEIL, 1));
-      envr.putVar("floor", new GeneralFunction(FLOOR, 1));
-      envr.putVar("sqrt", new GeneralFunction(SQRT, 1));
-      envr.putVar("mod", new GeneralFunction(MOD, 2));
-      envr.putVar("pow", new GeneralFunction(POW, 2));
-      envr.putVar("rand", new GeneralFunction(RAND, 0));
-      envr.putVar("int", new GeneralFunction(INT, 1));
-      envr.putVar("float", new GeneralFunction(FLOAT, 1));
-      envr.putVar("round", new GeneralFunction(ROUND, 2));
+      envr.putVar("abs", ABS);
+      envr.putVar("mod", MOD);
+      envr.putVar("pow", POW);
+      envr.putVar("int", INT);
+      envr.putVar("float", FLOAT);
+      envr.putVar("round", ROUND);
+      envr.putVar("floor", FLOOR);
+      envr.putVar("ceil", CEIL);
+      envr.putVar("sqrt", SQRT);
+      envr.putVar("rand", RAND);
    }
 
-   private static final int ABS = 0;
-   private static final int MOD = 1;
-   private static final int POW = 2;
-   private static final int CEIL = 3;
-   private static final int SQRT = 4;
-   private static final int RAND = 5;
-   private static final int FLOOR = 6;
-   private static final int ROUND = 7;
-   private static final int FLOAT = 8;
-   private static final int INT = 9;
-
-   private static class GeneralFunction extends Function {
-      private int _type;
-      private int _argCount;
-
-      public GeneralFunction(int type, int argc) {
-         _type = type;
-         _argCount = argc;
-      }
-
+   /**
+    * Return the absolute value of the given number.
+    */
+   public static final Function ABS = new Function() {
       @Override
       public Object apply(Object args) {
-         validateArgCount(args, _argCount);
+         validateArgCount(args, 1);
          Object x = first(args);
-         switch (_type) {
-            case ABS:
-               return Math.abs(numDouble(x));
-            case MOD:
-               if (first(args) instanceof Integer && second(args) instanceof Integer) {
-                  return numInt(x) % numInt(second(args));
-               } else {
-                  return numDouble(x) % numDouble(second(args));
-               }
-            case POW:
-               return Math.pow(numDouble(x), numDouble(second(args)));
-            case CEIL:
-               return Math.ceil(numDouble(x));
-            case SQRT:
-               return Math.sqrt(numDouble(x));
-            case RAND:
-               return new Random().nextInt();
-            case FLOOR:
-               return Math.floor(numDouble(x));
-            case ROUND:
-               final int roundType = BigDecimal.ROUND_HALF_UP;
-               BigDecimal bigdec = new BigDecimal(numDouble(first(args)));
-               BigDecimal rounded = bigdec.setScale(numInt(second(args)), roundType);
-               return rounded.doubleValue();
-            case FLOAT:
-               return numDouble(x);
-            case INT:
-               return numInt(x);
-            default:
-               return null;
+         return (numDouble(x) < 0) ? negate(num(x)) : x;
+      }
+   };
+
+   /**
+    * Return the modulus of the two parameters.
+    */
+   public static final Function MOD = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 2);
+         Object x = first(args);
+         Object y = second(args);
+
+         if (x instanceof Integer && y instanceof Integer) {
+            return numInt(x) % numInt(y);
+         } else {
+            return numDouble(x) % numDouble(y);
          }
       }
-   }
+   };
+
+   /**
+    * Return the first argument raised the power of the second argument.
+    */
+   public static final Function POW = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 2);
+         return Math.pow(numDouble(first(args)), numDouble(second(args)));
+      }
+   };
+
+   /**
+    * Round the given value up to the nearest integer (return float).
+    */
+   public static final Function CEIL = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return Math.ceil(numDouble(first(args)));
+      }
+   };
+
+   /**
+    * Round the given value down to the nearest integer (return float).
+    */
+   public static final Function FLOOR = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return Math.floor(numDouble(first(args)));
+      }
+   };
+
+   /**
+    * Return the square root of the given parameter
+    */
+   public static final Function SQRT = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return Math.sqrt(numDouble(first(args)));
+      }
+   };
+
+   /**
+    * Return a random number in [0, 1).
+    */
+   public static final Function RAND = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 0);
+         return rnd.nextFloat();
+      }
+   };
+
+   /**
+    * Return the given number cast as an integer.
+    */
+   public static final Function INT = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return numInt(first(args));
+      }
+   };
+
+   /**
+    * Return the given number cast as a float.
+    */
+   public static final Function FLOAT = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return numDouble(first(args));
+      }
+   };
+
+   /**
+    * Round the given value to the specified number of decimal places.
+    */
+   public static final Function ROUND = new Function() {
+      @Override
+      public Object apply(Object args) {
+         final int roundType = BigDecimal.ROUND_HALF_UP;
+         BigDecimal bigdec = new BigDecimal(numDouble(first(args)));
+         BigDecimal rounded = bigdec.setScale(numInt(second(args)), roundType);
+         return rounded.doubleValue();
+      }
+   };
 }
