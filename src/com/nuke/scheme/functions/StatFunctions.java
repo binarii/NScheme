@@ -16,8 +16,8 @@ public class StatFunctions extends LangUtil {
       envr.putVar("min", MIN);
       envr.putVar("avg", AVERAGE);
       envr.putVar("mean", AVERAGE);
-      envr.putVar("variance", VARIANCE);
       envr.putVar("stddev", STDDEV);
+      envr.putVar("variance", VARIANCE);
    }
 
    /**

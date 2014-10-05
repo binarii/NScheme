@@ -15,6 +15,9 @@ public class CoreFunctions {
       envr.putVar("number?", NUMBERQ);
    }
 
+   /**
+    * Return a pair consisting of the first and second argument.
+    */
    public static final Function CONS = new Function() {
       @Override
       public Object apply(Object args) {
@@ -23,6 +26,9 @@ public class CoreFunctions {
       }
    };
 
+   /**
+    * Return the first element of a list.
+    */
    public static final Function CAR = new Function() {
       @Override
       public Object apply(Object args) {
@@ -31,6 +37,9 @@ public class CoreFunctions {
       }
    };
 
+   /**
+    * Return the second element of a list.
+    */
    public static final Function CAAR = new Function() {
       @Override
       public Object apply(Object args) {
@@ -39,6 +48,9 @@ public class CoreFunctions {
       }
    };
 
+   /**
+    * Return the rest of the list.
+    */
    public static final Function CDR = new Function() {
       @Override
       public Object apply(Object args) {
@@ -47,6 +59,9 @@ public class CoreFunctions {
       }
    };
 
+   /**
+    * Return the rest of the rest of the list.
+    */
    public static final Function CDDR = new Function() {
       @Override
       public Object apply(Object args) {
@@ -55,6 +70,9 @@ public class CoreFunctions {
       }
    };
 
+   /**
+    * Return a list composed of the arguments.
+    */
    public static final Function LIST = new Function() {
       @Override
       public Object apply(Object args) {
@@ -62,6 +80,9 @@ public class CoreFunctions {
       }
    };
 
+   /**
+    * Boolean comparison checking if the input is null.
+    */
    public static final Function NULLQ = new Function() {
       @Override
       public Object apply(Object args) {
@@ -70,6 +91,9 @@ public class CoreFunctions {
       }
    };
 
+   /**
+    * Boolean comparison checking if the input is a number.
+    */
    public static final Function NUMBERQ = new Function() {
       @Override
       public Object apply(Object args) {
