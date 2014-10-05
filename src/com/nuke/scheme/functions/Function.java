@@ -8,5 +8,5 @@ import com.nuke.scheme.LangUtil;
  */
 public abstract class Function extends LangUtil {
 
-	public abstract Object apply(Object args);
+   public abstract Object apply(Object args);
 }
