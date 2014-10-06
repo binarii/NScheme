@@ -31,11 +31,11 @@ public class StatFunctions extends LangUtil {
          accum = firstTerm(num(first(args)));
          args = rest(args);
 
-         if (args == null) {
+         if (args == Pair.NULL) {
             return singleTerm(accum);
          }
 
-         while (args instanceof Pair) {
+         while (hasNext(args)) {
             accum = iterate(accum, num(first(args)));
             args = rest(args);
          }

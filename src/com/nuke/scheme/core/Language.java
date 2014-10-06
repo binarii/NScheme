@@ -15,8 +15,7 @@ public class Language extends LangUtil {
          if (x instanceof String) {
             String s = (String) x;
             Object result = env.findVar(s);
-            return result;
-
+            return (result != null) ? result : error("Undefined variable: " + s);
          } else if (!(x instanceof Pair)) {
             // Must be an integer or double
             return x;
@@ -35,7 +34,7 @@ public class Language extends LangUtil {
                Boolean cond = (Boolean) Language.eval(test, env);
                x = cond ? conseq : alt;
             } else if (fn.equals("begin")) {
-               while (rest(args) != null) {
+               while (hasNext(rest(args))) {
                   // If rest is null we are on the last item
                   eval(first(args), env);
                   args = rest(args);
@@ -66,7 +65,7 @@ public class Language extends LangUtil {
             } else if (fn.equals("listenv")) {
                validateArgCount(args, 0);
 
-               return env.getVariables(null);
+               return env.getVariables(Pair.NULL);
             } else {
                /*
                 * Otherwise the input is a linked list. In this case
@@ -86,6 +85,8 @@ public class Language extends LangUtil {
                      Function proc = (Function) fn;
                      return proc.apply(args);
                   }
+               } else {
+                  error("Expected a function");
                }
             }
          }
@@ -93,8 +94,8 @@ public class Language extends LangUtil {
    }
 
    protected static Pair evalList(Object list, Environment env) {
-      if (list == null) {
-         return null;
+      if (list == Pair.NULL) {
+         return Pair.NULL;
       } else if (!(list instanceof Pair)) {
          error("Illegal argument list");
          return null;

@@ -39,7 +39,7 @@ public class Closure extends Function {
       Environment temp = new Environment(_parent);
 
       Object vars = _vars;
-      while (vars instanceof Pair) {
+      while (hasNext(vars)) {
          String iden = str(first(vars));
          temp.putVar(iden, first(vals));
          vars = rest(vars);

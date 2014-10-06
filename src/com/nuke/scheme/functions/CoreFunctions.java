@@ -11,7 +11,7 @@ public class CoreFunctions {
       envr.putVar("cdr", CDR);
       envr.putVar("cddr", CDDR);
       envr.putVar("list", LIST);
-      envr.putVar("null", null);
+      envr.putVar("null", Pair.NULL);
       envr.putVar("null?", NULLQ);
       envr.putVar("pair?", PAIRQ);
       envr.putVar("number?", NUMBERQ);
@@ -91,7 +91,7 @@ public class CoreFunctions {
       @Override
       public Object apply(Object args) {
          validateArgCount(args, 1);
-         return first(args) == null;
+         return first(args) == Pair.NULL;
       }
    };
 

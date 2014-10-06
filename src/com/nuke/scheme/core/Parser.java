@@ -45,7 +45,7 @@ public class Parser extends LangUtil {
       if (token.equals("(")) {
 
          Object obj;
-         Object listRef = null;
+         Object listRef = Pair.NULL;
 
          while ((obj = tokens.peek()) != null && !obj.equals(")")) {
             listRef = cons(readToken(tokens), listRef);

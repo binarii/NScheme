@@ -65,14 +65,18 @@ public class LangUtil extends LangArithmetic {
    public static void validateArgCount(Object x, int desired) {
       int length = length(x);
       if (length != desired) {
-         error("argument count mismatch, expected " + desired + " got " + length);
+         error("argument count mismatch: expected " + desired + " got " + length);
       }
+   }
+
+   public static boolean hasNext(Object p) {
+      return (p instanceof Pair) && (p != Pair.NULL);
    }
 
    public static int length(Object x) {
       int count = 0;
 
-      while (x instanceof Pair) {
+      while (hasNext(x)) {
          count++;
          x = ((Pair) x).next;
       }
@@ -81,7 +85,7 @@ public class LangUtil extends LangArithmetic {
    }
 
    public static Object first(Object x) {
-      return (x instanceof Pair) ? ((Pair) x).first : null;
+      return (x instanceof Pair) ? ((Pair) x).first : error("Expected type pair");
    }
 
    public static Object second(Object x) {
@@ -93,7 +97,7 @@ public class LangUtil extends LangArithmetic {
    }
 
    public static Object rest(Object x) {
-      return (x instanceof Pair) ? ((Pair) x).next : null;
+      return (x instanceof Pair) ? ((Pair) x).next : error("Expected type pair");
    }
 
    public static Pair cons(Object a, Object b) {
@@ -101,16 +105,16 @@ public class LangUtil extends LangArithmetic {
    }
 
    public static Pair list(Object a) {
-      return new Pair(a, null);
+      return new Pair(a, Pair.NULL);
    }
 
    public static Pair list(Object a, Object b) {
-      return new Pair(a, new Pair(b, null));
+      return new Pair(a, new Pair(b, Pair.NULL));
    }
 
    public static Pair reverse(Object x) {
-      Pair result = null;
-      while (x instanceof Pair) {
+      Pair result = Pair.NULL;
+      while (hasNext(x)) {
          result = cons(first(x), result);
          x = ((Pair) x).next;
       }
@@ -118,7 +122,7 @@ public class LangUtil extends LangArithmetic {
    }
 
    public static void stringify(Object x, boolean quoted, StringBuilder buf) {
-      if (x == null) {
+      if (x == Pair.NULL) {
          buf.append("()");
       } else if (x instanceof Number) {
          buf.append(x);
@@ -144,7 +148,7 @@ public class LangUtil extends LangArithmetic {
    }
 
    public static void stringifyPair(Pair x, boolean quoted, StringBuilder buf) {
-      if (x.next != null && !(x.next instanceof Pair)) {
+      if (x.next != Pair.NULL && !(x.next instanceof Pair)) {
          // We have a pair rather than list.
          buf.append("(");
          stringify(x.first, quoted, buf);
@@ -156,7 +160,7 @@ public class LangUtil extends LangArithmetic {
          stringify(first(x), quoted, buf);
          Object tail = rest(x);
 
-         while (tail instanceof Pair) {
+         while (hasNext(tail)) {
             buf.append(", ");
             stringify(((Pair) tail).first, quoted, buf);
             tail = ((Pair) tail).next;
@@ -167,7 +171,7 @@ public class LangUtil extends LangArithmetic {
 
    public static Pair listToPair(LinkedList<Object> list) {
       if (list.size() == 0) {
-         return null;
+         return Pair.NULL;
       } else {
          return new Pair(list.pop(), listToPair(list));
       }

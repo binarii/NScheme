@@ -1,6 +1,9 @@
 package com.nuke.scheme.core;
 
 public class Pair {
+
+   public static final Pair NULL = new Pair(null, null);
+
    public Pair(Object a, Object b) {
       this.first = a;
       this.next = b;

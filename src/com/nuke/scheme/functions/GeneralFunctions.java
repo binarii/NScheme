@@ -20,6 +20,7 @@ public class GeneralFunctions {
       envr.putVar("ceil", CEIL);
       envr.putVar("sqrt", SQRT);
       envr.putVar("rand", RAND);
+      envr.putVar("length", LENGTH);
    }
 
    /**
@@ -139,6 +140,17 @@ public class GeneralFunctions {
          BigDecimal bigdec = new BigDecimal(numDouble(first(args)));
          BigDecimal rounded = bigdec.setScale(numInt(second(args)), roundType);
          return rounded.doubleValue();
+      }
+   };
+
+   /**
+    * Return the length of the argument as list
+    */
+   public static final Function LENGTH = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return length(first(args));
       }
    };
 }

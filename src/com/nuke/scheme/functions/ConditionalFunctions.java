@@ -23,7 +23,7 @@ public class ConditionalFunctions extends LangUtil {
    public static final Function GT = new Function() {
       @Override
       public Object apply(Object args) {
-         while (rest(args) instanceof Pair) {
+         while (hasNext(rest(args))) {
             double x = numDouble(first(args));
             double y = numDouble(second(args));
             args = rest(args);
@@ -42,7 +42,7 @@ public class ConditionalFunctions extends LangUtil {
    public static final Function GTE = new Function() {
       @Override
       public Object apply(Object args) {
-         while (rest(args) instanceof Pair) {
+         while (hasNext(rest(args))) {
             double x = numDouble(first(args));
             double y = numDouble(second(args));
             args = rest(args);
@@ -61,7 +61,7 @@ public class ConditionalFunctions extends LangUtil {
    public static final Function LT = new Function() {
       @Override
       public Object apply(Object args) {
-         while (rest(args) instanceof Pair) {
+         while (hasNext(rest(args))) {
             double x = numDouble(first(args));
             double y = numDouble(second(args));
             args = rest(args);
@@ -80,7 +80,7 @@ public class ConditionalFunctions extends LangUtil {
    public static final Function LTE = new Function() {
       @Override
       public Object apply(Object args) {
-         while (rest(args) instanceof Pair) {
+         while (hasNext(rest(args))) {
             double x = numDouble(first(args));
             double y = numDouble(second(args));
             args = rest(args);
@@ -99,7 +99,7 @@ public class ConditionalFunctions extends LangUtil {
    public static final Function EQUALS = new Function() {
       @Override
       public Object apply(Object args) {
-         while (rest(args) instanceof Pair) {
+         while (hasNext(rest(args))) {
             double x = numDouble(first(args));
             double y = numDouble(second(args));
             args = rest(args);
@@ -118,7 +118,7 @@ public class ConditionalFunctions extends LangUtil {
    public static final Function OR = new Function() {
       @Override
       public Object apply(Object args) {
-         for (; args instanceof Pair; args = rest(args)) {
+         for (; hasNext(args); args = rest(args)) {
             if (bool(first(args))) {
                return TRUE;
             }
@@ -133,7 +133,7 @@ public class ConditionalFunctions extends LangUtil {
    public static final Function AND = new Function() {
       @Override
       public Object apply(Object args) {
-         for (; args instanceof Pair; args = rest(args)) {
+         for (; hasNext(args); args = rest(args)) {
             if (!bool(first(args))) {
                return FALSE;
             }
