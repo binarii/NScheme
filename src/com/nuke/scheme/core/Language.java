@@ -63,6 +63,10 @@ public class Language extends LangUtil {
                env.putVar(str(iden), value);
 
                return value;
+            } else if (fn.equals("listenv")) {
+               validateArgCount(args, 0);
+
+               return env.getVariables(null);
             } else {
                /*
                 * Otherwise the input is a linked list. In this case
