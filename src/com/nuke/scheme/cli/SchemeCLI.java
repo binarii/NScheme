@@ -1,9 +1,6 @@
 package com.nuke.scheme.cli;
 
-import com.nuke.scheme.core.Environment;
-import com.nuke.scheme.core.LangUtil;
-import com.nuke.scheme.core.Language;
-import com.nuke.scheme.core.Parser;
+import com.nuke.scheme.core.*;
 
 import java.util.Scanner;
 
@@ -13,13 +10,10 @@ import java.util.Scanner;
 public class SchemeCLI {
 
    public static void main(String[] args) {
-      Environment env = new Environment(null);
+      Environment env = new CoreEnvironment();
       Scanner scanner = new Scanner(System.in);
       StringBuilder out = new StringBuilder();
       String line;
-
-
-      Language.addDefaultVariables(env);
 
       while(!(line = scanner.nextLine()).equalsIgnoreCase("quit")) {
          Object tokens = Parser.parse(line);
@@ -30,7 +24,5 @@ public class SchemeCLI {
 
          System.out.println(out.toString());
       }
-
-
    }
 }
