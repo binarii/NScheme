@@ -1,6 +1,7 @@
 package com.nuke.scheme.functions;
 
 import com.nuke.scheme.core.Environment;
+import com.nuke.scheme.core.Pair;
 
 public class CoreFunctions {
    public static void addFunctions(Environment envr) {
@@ -10,9 +11,12 @@ public class CoreFunctions {
       envr.putVar("cdr", CDR);
       envr.putVar("cddr", CDDR);
       envr.putVar("list", LIST);
-      envr.putVar("null?", NULLQ);
       envr.putVar("null", null);
+      envr.putVar("null?", NULLQ);
+      envr.putVar("pair?", PAIRQ);
       envr.putVar("number?", NUMBERQ);
+      envr.putVar("boolean?", BOOLEANQ);
+      envr.putVar("procedure?", PROCEDUREQ);
    }
 
    /**
@@ -81,7 +85,7 @@ public class CoreFunctions {
    };
 
    /**
-    * Boolean comparison checking if the input is null.
+    * Return true if the argument is null.
     */
    public static final Function NULLQ = new Function() {
       @Override
@@ -92,13 +96,46 @@ public class CoreFunctions {
    };
 
    /**
-    * Boolean comparison checking if the input is a number.
+    * Return true if the type of the argument is number.
     */
    public static final Function NUMBERQ = new Function() {
       @Override
       public Object apply(Object args) {
          validateArgCount(args, 1);
          return (first(args) instanceof Number);
+      }
+   };
+
+   /**
+    * Return true if the type of the argument is boolean.
+    */
+   public static final Function BOOLEANQ = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return (first(args) instanceof Boolean);
+      }
+   };
+
+   /**
+    * Return true if the type of the argument is pair.
+    */
+   public static final Function PAIRQ = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return (first(args) instanceof Pair);
+      }
+   };
+
+   /**
+    * Return true if the type of the argument is function.
+    */
+   public static final Function PROCEDUREQ = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return (first(args) instanceof Function);
       }
    };
 }

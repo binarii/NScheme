@@ -9,6 +9,9 @@ public class TrigFunctions {
    public static final double toRadians = PI / 180.0;
 
    public static void addFunctions(Environment envr) {
+      envr.putVar("exp", EXP);
+      envr.putVar("log", LOG);
+
       envr.putVar("sin", SIN);
       envr.putVar("cos", COS);
       envr.putVar("tan", TAN);
@@ -17,6 +20,28 @@ public class TrigFunctions {
       envr.putVar("cosd", COSD);
       envr.putVar("tand", TAND);
    }
+
+   /**
+    * Return e raised to the power of the argument.
+    */
+   private static final Function EXP = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return Math.exp(numDouble(first(args)));
+      }
+   };
+
+   /**
+    * Return the base 10 logarithm of the argument.
+    */
+   public static final Function LOG = new Function() {
+      @Override
+      public Object apply(Object args) {
+         validateArgCount(args, 1);
+         return Math.log(numDouble(first(args)));
+      }
+   };
 
    /**
     * Return the sine of the argument in radians.

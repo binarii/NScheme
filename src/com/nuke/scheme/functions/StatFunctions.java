@@ -11,7 +11,6 @@ public class StatFunctions extends LangUtil {
       envr.putVar("-", SUB);
       envr.putVar("*", MULT);
       envr.putVar("/", DIVIDE);
-      envr.putVar("sum", ADD);
       envr.putVar("max", MAX);
       envr.putVar("min", MIN);
       envr.putVar("avg", AVERAGE);

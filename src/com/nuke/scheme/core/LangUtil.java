@@ -64,8 +64,9 @@ public class LangUtil extends LangArithmetic {
 
    public static void validateArgCount(Object x, int desired) {
       int length = length(x);
-      if (length != desired)
+      if (length != desired) {
          error("argument count mismatch, expected " + desired + " got " + length);
+      }
    }
 
    public static int length(Object x) {
@@ -138,21 +139,30 @@ public class LangUtil extends LangArithmetic {
       } else if (x instanceof Pair) {
          stringifyPair((Pair) x, quoted, buf);
       } else if (x instanceof Function) {
-         buf.append(((Function)x).toString());
+         buf.append(((Function) x).toString());
       }
    }
 
    public static void stringifyPair(Pair x, boolean quoted, StringBuilder buf) {
-      buf.append("[");
-      stringify(first(x), quoted, buf);
-      Object tail = rest(x);
+      if (x.next != null && !(x.next instanceof Pair)) {
+         // We have a pair rather than list.
+         buf.append("(");
+         stringify(x.first, quoted, buf);
+         buf.append(" . ");
+         stringify(x.next, quoted, buf);
+         buf.append(")");
+      } else {
+         buf.append("[");
+         stringify(first(x), quoted, buf);
+         Object tail = rest(x);
 
-      while (tail instanceof Pair) {
-         buf.append(", ");
-         stringify(((Pair) tail).first, quoted, buf);
-         tail = ((Pair) tail).next;
+         while (tail instanceof Pair) {
+            buf.append(", ");
+            stringify(((Pair) tail).first, quoted, buf);
+            tail = ((Pair) tail).next;
+         }
+         buf.append("]");
       }
-      buf.append("]");
    }
 
    public static Pair listToPair(LinkedList<Object> list) {
