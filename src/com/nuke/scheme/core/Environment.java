@@ -1,6 +1,7 @@
 package com.nuke.scheme.core;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The environment stores the variable references as well as the table and its
@@ -46,5 +47,20 @@ public class Environment {
       } else { // else in this level, set variable
          _envrVariables.put(k, v);
       }
+   }
+
+   public Pair getVariables(Pair accum) {
+      if(_parent != null) {
+         accum = _parent.getVariables(accum);
+      }
+
+      for (Map.Entry<String, Object> entry : _envrVariables.entrySet()) {
+         String key = entry.getKey();
+         Object value = entry.getValue();
+
+         accum = LangUtil.cons(LangUtil.cons(key, value), accum);
+      }
+
+      return accum;
    }
 }

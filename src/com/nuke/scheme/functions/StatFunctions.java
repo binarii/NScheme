@@ -7,141 +7,202 @@ import com.nuke.scheme.core.Pair;
 public class StatFunctions extends LangUtil {
 
    public static void addFunctions(Environment envr) {
-      envr.putVar("+", new StatFunction(PLUS));
-      envr.putVar("-", new StatFunction(MINUS));
-      envr.putVar("*", new StatFunction(MULT));
-      envr.putVar("/", new StatFunction(DIVIDE));
-      envr.putVar("sum", new StatFunction(PLUS));
-      envr.putVar("max", new StatFunction(MAX));
-      envr.putVar("min", new StatFunction(MIN));
-      envr.putVar("avg", new AverageFunction());
-      envr.putVar("mean", new AverageFunction());
-      envr.putVar("variance", new VarianceFunction());
-      envr.putVar("stddev", new StddevFunction());
+      envr.putVar("+", ADD);
+      envr.putVar("-", SUB);
+      envr.putVar("*", MULT);
+      envr.putVar("/", DIVIDE);
+      envr.putVar("max", MAX);
+      envr.putVar("min", MIN);
+      envr.putVar("avg", AVERAGE);
+      envr.putVar("mean", AVERAGE);
+      envr.putVar("stddev", STDDEV);
+      envr.putVar("variance", VARIANCE);
    }
 
-   private static final int PLUS = 0;
-   private static final int MINUS = 1;
-   private static final int MULT = 2;
-   private static final int DIVIDE = 3;
-   private static final int MIN = 4;
-   private static final int MAX = 5;
-   private static final int PLUSSQUARE = 6;
-
-   public static Object applyCompute(Object args, int op, Number result) {
-      if (args == null) {
-         switch (op) {
-            case MINUS:
-               return negate(result);
-            case DIVIDE:
-               return divide(1, result);
-            default:
-               return result;
+   /**
+    * Iterates over all the elements in the argument list, applies the iterate method to the
+    * accumulator and each term. If there is only a single value, the singleTerm function is
+    * returned. The firstTerm function determines the starting value of the accumulator.
+    */
+   private static abstract class MathFunction extends Function {
+      @Override
+      public Object apply(Object args) {
+         if(length(args) == 1 && first(args) instanceof Pair) {
+            return apply(first(args));
          }
-      } else {
-         while (args instanceof Pair) {
-            if (first(args) instanceof Pair && op == PLUS) {
-               result = num(applyCompute(first(args), PLUS, result));
-               args = rest(args);
-               continue;
-            }
 
-            Number val = num(first(args));
+         Number accum;
+         accum = firstTerm(num(first(args)));
+         args = rest(args);
+
+         if (args == Pair.NULL) {
+            return singleTerm(accum);
+         }
+
+         while (hasNext(args)) {
+            accum = iterate(accum, num(first(args)));
             args = rest(args);
-
-            switch (op) {
-               case PLUS:
-                  result = add(result, val);
-                  break;
-               case MINUS:
-                  result = subtract(result, val);
-                  break;
-               case MULT:
-                  result = multiply(result, val);
-                  break;
-               case DIVIDE:
-                  result = divide(result, val);
-                  break;
-               case MIN:
-                  double a = result.doubleValue();
-                  double b = val.doubleValue();
-                  result = (b < a) ? val : result;
-                  break;
-               case MAX:
-                  double c = result.doubleValue();
-                  double d = val.doubleValue();
-                  result = (d > c) ? val : result;
-                  break;
-               case PLUSSQUARE:
-                  result = add(result, multiply(val, val));
-            }
          }
+
+         return accum;
       }
-      return result;
+
+      protected Number singleTerm(Number accum) {
+         return accum;
+      }
+
+      protected Number firstTerm(Number accum) {
+         return accum;
+      }
+
+      protected abstract Number iterate(Number accum, Number val);
    }
 
-   private static class StatFunction extends Function {
-      private int _type;
+   /**
+    * Returns the sum of a list of numbers.
+    */
+   public static final Function ADD = new MathFunction() {
+      @Override
+      protected Number iterate(Number accum, Number val) {
+         return add(accum, val);
+      }
+   };
 
-      public StatFunction(int type) {
-         _type = type;
+   /**
+    * Returns the first term, minus all subsequent terms. If a single term, it negates it.
+    */
+   public static final Function SUB = new MathFunction() {
+      @Override
+      protected Number iterate(Number accum, Number val) {
+         return subtract(accum, val);
       }
 
       @Override
-      public Object apply(Object args) {
-         Object x = first(args);
-         Object y = rest(args);
-         switch (_type) {
-            case PLUS:
-               return applyCompute(args, PLUS, 0);
-            case MINUS:
-               return applyCompute(y, MINUS, num(x));
-            case MULT:
-               return applyCompute(args, MULT, 1);
-            case DIVIDE:
-               return applyCompute(y, DIVIDE, num(x));
-            case MIN:
-               return applyCompute(args, MIN, num(x));
-            case MAX:
-               return applyCompute(args, MAX, num(x));
-            default:
-               return null;
-         }
+      protected Number singleTerm(Number accum) {
+         return negate(accum);
       }
-   }
+   };
 
-   private static class AverageFunction extends Function {
+   /**
+    * Multiplies all the terms together.
+    */
+   public static final Function MULT = new MathFunction() {
+      @Override
+      protected Number iterate(Number accum, Number val) {
+         return multiply(accum, val);
+      }
+   };
+
+   /**
+    * Returns the first term divided by all subsequent terms. If a single term,
+    * returns the inverse.
+    */
+   public static final Function DIVIDE = new MathFunction() {
+      @Override
+      protected Number iterate(Number accum, Number val) {
+         return divide(accum, val);
+      }
+
+      @Override
+      protected Number singleTerm(Number accum) {
+         return divide(1.0f, accum);
+      }
+   };
+
+   /**
+    * Returns the minimum of a list of numbers.
+    */
+   public static final Function MIN = new MathFunction() {
+      @Override
+      protected Number iterate(Number accum, Number val) {
+         double x = numDouble(accum);
+         double y = numDouble(val);
+
+         return (x > y) ? y : x;
+      }
+   };
+
+   /**
+    * Returns the maximum of a list of numbers.
+    */
+   public static final Function MAX = new MathFunction() {
+      @Override
+      protected Number iterate(Number accum, Number val) {
+         double x = numDouble(accum);
+         double y = numDouble(val);
+
+         return (x < y) ? y : x;
+      }
+   };
+
+   /**
+    * Returns the sum of each term squared [E (i * i)]
+    */
+   public static final Function ADD_SQUARED = new MathFunction() {
+      @Override
+      protected Number iterate(Number accum, Number val) {
+         return add(accum, multiply(val, val));
+      }
+
+      @Override
+      protected Number firstTerm(Number accum) {
+         return multiply(accum, accum);
+      }
+   };
+
+   /**
+    * Return the average of a list of numbers.
+    */
+   public static final Function AVERAGE = new Function() {
       @Override
       public Object apply(Object args) {
-         int length = length(args);
-         Number sum = num(applyCompute(args, PLUS, 0));
+         if(length(args) == 1 && first(args) instanceof Pair) {
+            return apply(first(args));
+         }
+
+         double length = length(args);
+         Number sum = num(ADD.apply(args));
          return divide(sum, length);
       }
-   }
+   };
 
-   private static class VarianceFunction extends Function {
+   /**
+    * Return the variance of a list of numbers.
+    */
+   public static final Function VARIANCE = new Function() {
       @Override
       public Object apply(Object args) {
-         int length = length(args);
-         Number sum = num(applyCompute(args, PLUS, 0));
-         Number sumSqr = num(applyCompute(args, PLUSSQUARE, 0));
+         if(length(args) == 1 && first(args) instanceof Pair) {
+            return apply(first(args));
+         }
+
+         double length = length(args);
+         Number sum = num(ADD.apply(args));
+         Number sumSqr = num(ADD_SQUARED.apply(args));
 
          // (sumSqr - (sum * sum) / n)/n
          return divide(subtract(sumSqr, divide(multiply(sum, sum), length)), length);
       }
-   }
+   };
 
-   private static class StddevFunction extends Function {
+   /**
+    * Return the stddev of a list of numbers.
+    */
+   public static final Function STDDEV = new Function() {
       @Override
       public Object apply(Object args) {
-         int length = length(args);
-         Number sum = num(applyCompute(args, PLUS, 0));
-         Number sumSqr = num(applyCompute(args, PLUSSQUARE, 0));
+         if(length(args) == 1 && first(args) instanceof Pair) {
+            return apply(first(args));
+         }
+
+         double length = length(args);
+         Number sum = num(ADD.apply(args));
+         Number sumSqr = num(ADD_SQUARED.apply(args));
 
          // (sumSqr - (sum * sum) / n)/n
          Number sumSquareByN = divide(multiply(sum, sum), length);
          Number variance = divide(subtract(sumSqr, sumSquareByN), length);
          return Math.sqrt(variance.doubleValue());
       }
-   }
+   };
 }

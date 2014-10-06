@@ -1,9 +1,6 @@
 package com.nuke.scheme.cli;
 
-import com.nuke.scheme.core.Environment;
-import com.nuke.scheme.core.LangUtil;
-import com.nuke.scheme.core.Language;
-import com.nuke.scheme.core.Parser;
+import com.nuke.scheme.core.*;
 
 import java.util.Scanner;
 
@@ -13,15 +10,20 @@ import java.util.Scanner;
 public class SchemeCLI {
 
    public static void main(String[] args) {
-      Environment env = new Environment(null);
+      Environment env = new CoreEnvironment();
       Scanner scanner = new Scanner(System.in);
       StringBuilder out = new StringBuilder();
       String line;
 
-
-      Language.addDefaultVariables(env);
-
       while(!(line = scanner.nextLine()).equalsIgnoreCase("quit")) {
+         while(parenMatch(line) > 0) {
+            line = line + " " + scanner.nextLine();
+         }
+
+         if(line.isEmpty()) {
+            continue;
+         }
+
          Object tokens = Parser.parse(line);
          Object result = Language.eval(tokens, env);
 
@@ -30,7 +32,19 @@ public class SchemeCLI {
 
          System.out.println(out.toString());
       }
+   }
 
+   public static int parenMatch(String s) {
+      int count = 0;
+      int length = s.length();
 
+      for(int i = 0; i < length; i++) {
+         if(s.charAt(i) == '(') {
+            count++;
+         } else if (s.charAt(i) == ')') {
+            count--;
+         }
+      }
+      return count;
    }
 }
