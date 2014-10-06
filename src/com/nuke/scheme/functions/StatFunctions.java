@@ -27,6 +27,10 @@ public class StatFunctions extends LangUtil {
    private static abstract class MathFunction extends Function {
       @Override
       public Object apply(Object args) {
+         if(length(args) == 1 && first(args) instanceof Pair) {
+            return apply(first(args));
+         }
+
          Number accum;
          accum = firstTerm(num(first(args)));
          args = rest(args);
@@ -152,7 +156,11 @@ public class StatFunctions extends LangUtil {
    public static final Function AVERAGE = new Function() {
       @Override
       public Object apply(Object args) {
-         int length = length(args);
+         if(length(args) == 1 && first(args) instanceof Pair) {
+            return apply(first(args));
+         }
+
+         double length = length(args);
          Number sum = num(ADD.apply(args));
          return divide(sum, length);
       }
@@ -164,7 +172,11 @@ public class StatFunctions extends LangUtil {
    public static final Function VARIANCE = new Function() {
       @Override
       public Object apply(Object args) {
-         int length = length(args);
+         if(length(args) == 1 && first(args) instanceof Pair) {
+            return apply(first(args));
+         }
+
+         double length = length(args);
          Number sum = num(ADD.apply(args));
          Number sumSqr = num(ADD_SQUARED.apply(args));
 
@@ -179,7 +191,11 @@ public class StatFunctions extends LangUtil {
    public static final Function STDDEV = new Function() {
       @Override
       public Object apply(Object args) {
-         int length = length(args);
+         if(length(args) == 1 && first(args) instanceof Pair) {
+            return apply(first(args));
+         }
+
+         double length = length(args);
          Number sum = num(ADD.apply(args));
          Number sumSqr = num(ADD_SQUARED.apply(args));
 
