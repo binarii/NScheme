@@ -21,6 +21,7 @@ public class Parser extends LangUtil {
    public static LinkedList<String> tokenize(String s) {
       String tmp = s.replace("(", " ( ");
       tmp = tmp.replace(")", " ) ");
+      tmp = tmp.replace("\n", " ");
       String[] tokenArray = tmp.split("[ ]+");
       LinkedList<String> tokens = new LinkedList<String>();
       for (String str : tokenArray) {

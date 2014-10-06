@@ -16,6 +16,14 @@ public class SchemeCLI {
       String line;
 
       while(!(line = scanner.nextLine()).equalsIgnoreCase("quit")) {
+         while(parenMatch(line) > 0) {
+            line = line + " " + scanner.nextLine();
+         }
+
+         if(line.isEmpty()) {
+            continue;
+         }
+
          Object tokens = Parser.parse(line);
          Object result = Language.eval(tokens, env);
 
@@ -24,5 +32,19 @@ public class SchemeCLI {
 
          System.out.println(out.toString());
       }
+   }
+
+   public static int parenMatch(String s) {
+      int count = 0;
+      int length = s.length();
+
+      for(int i = 0; i < length; i++) {
+         if(s.charAt(i) == '(') {
+            count++;
+         } else if (s.charAt(i) == ')') {
+            count--;
+         }
+      }
+      return count;
    }
 }
