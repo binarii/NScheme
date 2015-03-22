@@ -37,7 +37,7 @@ public class CoreFunctions {
       @Override
       public Object apply(Object args) {
          validateArgCount(args, 1);
-         return first(args);
+         return first(first(args));
       }
    };
 
@@ -48,7 +48,7 @@ public class CoreFunctions {
       @Override
       public Object apply(Object args) {
          validateArgCount(args, 1);
-         return second(args);
+         return second(first(args));
       }
    };
 
@@ -59,7 +59,7 @@ public class CoreFunctions {
       @Override
       public Object apply(Object args) {
          validateArgCount(args, 1);
-         return rest(args);
+         return rest(first(args));
       }
    };
 
@@ -70,7 +70,7 @@ public class CoreFunctions {
       @Override
       public Object apply(Object args) {
          validateArgCount(args, 1);
-         return rest(rest(args));
+         return rest(rest(first(args)));
       }
    };
 
